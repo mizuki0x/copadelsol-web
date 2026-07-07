@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Copa del Sol | Onchain arcade soccer on Solana</title>
+<meta name="description" content="Onchain arcade soccer on Solana. Pick your nation, play free 1v1 in your browser, and enter SOL cups for real prizes. Every match verifiable onchain.">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Copa del Sol | Onchain arcade soccer on Solana">
+<meta property="og:description" content="Pick your nation, play free 1v1, enter SOL cups for real prizes. Every match verifiable onchain.">
+<meta property="og:image" content="/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://copadelsol.com">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@PlayCopaDelSol">
+<meta name="theme-color" content="#e0492a">
+<style>
+  :root{
+    --ember:#e0492a; --amber:#ff8a3a; --gold:#ffd23f; --gold2:#ff9e2e; --sun:#ffc63f;
+    --grass:#6bbe4a; --grass2:#57a03c; --grassd:#2f6a2c; --pine:#123024; --pine2:#0d2419; --pine3:#17422b;
+    --cream:#fff6e6; --cream2:#ffedcf; --cream3:#f6d9ab;
+    --red:#d8443f; --redd:#9e2b28; --blu:#2f6fd6; --navy:#1b3a6b;
+    --ink:#122a1e; --muted:#5d7466; --white:#ffffff;
+    --shadow:rgba(18,42,30,.9);
+    --maxw:1160px;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);
+    font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  img,canvas{max-width:100%;display:block}
+  .px{image-rendering:pixelated;image-rendering:crisp-edges}
+  .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--ember);margin:0 0 14px;font-weight:700}
+  h2{font-size:clamp(27px,4.2vw,42px);line-height:1.05;letter-spacing:-.02em;margin:0 0 14px;font-weight:800;color:var(--pine)}
+  h3{font-size:19px;margin:0 0 6px;font-weight:800;letter-spacing:-.01em;color:var(--pine)}
+  p{margin:0 0 14px;color:var(--muted)}
+  section{position:relative;padding:84px 0}
+  .lead{font-size:18px;max-width:46ch}
+
+  .on-dark{color:var(--white)}
+  .on-dark h2,.on-dark h3{color:var(--white)}
+  .on-dark .eyebrow{color:var(--gold)}
+  .on-dark p{color:rgba(255,255,255,.84)}
+
+  /* pixel-panel primitive: square, chunky border, hard offset shadow */
+  .panel{border:3px solid var(--pine);box-shadow:6px 6px 0 0 var(--shadow);background:var(--white);
+    transition:transform .12s ease,box-shadow .12s ease}
+  .panel:hover{transform:translate(-2px,-2px);box-shadow:9px 9px 0 0 var(--shadow)}
+
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-weight:800;
+    font-size:14px;letter-spacing:.03em;text-transform:uppercase;padding:14px 22px;
+    border:3px solid #3a1c06;box-shadow:4px 4px 0 0 rgba(58,28,6,.85);
+    transition:transform .1s ease,box-shadow .1s ease,filter .16s,background .16s,color .16s}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:6px 6px 0 0 rgba(58,28,6,.85)}
+  .btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 0 rgba(58,28,6,.85)}
+  .btn--play{background:linear-gradient(180deg,var(--gold),var(--gold2));color:#3a1c06}
+  .btn--play:hover{filter:brightness(1.05)}
+  .btn--dark{background:var(--pine);color:var(--cream);border-color:#05140c;box-shadow:4px 4px 0 0 rgba(5,20,12,.85)}
+  .btn--dark:hover{box-shadow:6px 6px 0 0 rgba(5,20,12,.85)}
+  .btn--ghost{background:var(--white);color:var(--pine);border-color:var(--pine);box-shadow:4px 4px 0 0 var(--shadow)}
+  .btn--ghost:hover{box-shadow:6px 6px 0 0 var(--shadow)}
+  .btn--ghostw{background:rgba(255,255,255,.14);border-color:#fff;color:#fff;box-shadow:4px 4px 0 0 rgba(120,40,10,.5)}
+  .btn--ghostw:hover{background:#fff;color:var(--pine)}
+  .btn--sm{padding:9px 14px;font-size:12px;border-width:2px;box-shadow:3px 3px 0 0 rgba(58,28,6,.85)}
+  .btn--sm:hover{box-shadow:4px 4px 0 0 rgba(58,28,6,.85)}
+
+  /* nav */
+  header.nav{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .25s,border-color .25s,backdrop-filter .25s;border-bottom:2px solid transparent}
+  header.nav.scrolled{background:rgba(13,36,25,.94);backdrop-filter:blur(8px);border-bottom-color:var(--grassd)}
+  .nav__in{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.02em;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .brand img{width:34px;height:34px}
+  .brand .brand-wordmark{width:auto;height:24px}
+  .brand span{font-size:16px}
+  .nav__links{display:flex;align-items:center;gap:26px}
+  .nav__links a{font-size:13px;color:rgba(255,255,255,.88);font-weight:700;text-transform:uppercase;letter-spacing:.06em;transition:color .15s;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+  .nav__links a:hover{color:var(--gold)}
+  @media(max-width:820px){.nav__links{display:none}}
+
+  /* hero */
+  .hero{padding:112px 0 74px;position:relative;overflow:hidden;
+    background:linear-gradient(178deg,var(--ember) 0%,var(--amber) 50%,var(--sun) 100%)}
+  .hero__deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .sun{position:absolute;right:7%;top:44px;width:118px;height:118px;background:var(--gold);border-radius:50%;
+    box-shadow:0 0 0 10px rgba(255,236,150,.5),0 0 60px 20px rgba(255,214,90,.45);will-change:transform}
+  .sun::before{content:"";position:absolute;inset:-30px;border-radius:50%;
+    background:repeating-conic-gradient(from 0deg,rgba(255,226,125,.6) 0deg 7deg,transparent 7deg 30deg);
+    -webkit-mask:radial-gradient(circle,transparent 59px,#000 61px);mask:radial-gradient(circle,transparent 59px,#000 61px);
+    animation:spin 64s linear infinite}
+  .cloud{position:absolute;width:14px;height:14px;background:#fff;opacity:.92;
+    box-shadow:-14px 0 0 #fff,14px 0 0 #fff,28px 0 0 #fff,42px 0 0 #fff,0 -14px 0 #fff,14px -14px 0 #fff,28px -14px 0 #fff,14px 14px 0 rgba(255,255,255,.5)}
+  .cloud.c1{top:88px;left:-80px;transform:scale(1.1);animation:drift 42s linear infinite}
+  .cloud.c2{top:150px;left:-120px;transform:scale(.7);opacity:.7;animation:drift 66s linear infinite 8s}
+  .cloud.c3{top:56px;left:-60px;transform:scale(.85);opacity:.8;animation:drift 54s linear infinite 20s}
+  @keyframes drift{from{margin-left:0}to{margin-left:calc(100vw + 260px)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:36px;z-index:1;
+    background:repeating-linear-gradient(90deg,var(--grass) 0 16px,var(--grass2) 16px 32px);
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.16),inset 0 -5px 0 var(--grassd)}
+  .hero__grid{display:grid;grid-template-columns:.78fr 1.22fr;gap:40px;align-items:center;position:relative;z-index:2}
+  .badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--pine);background:#fff;
+    border:2px solid var(--pine);box-shadow:3px 3px 0 0 rgba(18,42,30,.45);padding:7px 13px;margin-bottom:22px;font-weight:700}
+  .badge .dot{width:7px;height:7px;background:#2fbf4a;box-shadow:0 0 0 0 rgba(47,191,74,.6);animation:pulse 1.9s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(47,191,74,.5)}70%{box-shadow:0 0 0 7px rgba(47,191,74,0)}100%{box-shadow:0 0 0 0 rgba(47,191,74,0)}}
+  .hero-crest{width:min(60%,272px);height:auto;margin:2px 0 20px;filter:drop-shadow(0 8px 18px rgba(90,30,10,.4))}
+  .hero p{font-size:19px;max-width:40ch;color:#fff;font-weight:600;text-shadow:0 2px 0 rgba(120,40,10,.35)}
+  .hero__cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
+  .trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:26px;color:#fff;font-size:13px;text-shadow:0 2px 0 rgba(120,40,10,.4)}
+  .trust b{font-weight:800}
+
+  /* arcade cabinet screen */
+  .screen{position:relative;padding:16px;background:linear-gradient(160deg,#20351f,#0f2013);
+    border:4px solid #0a140b;box-shadow:inset 0 0 0 2px #35502e,10px 12px 0 0 rgba(30,12,0,.45),0 30px 60px -24px rgba(40,15,0,.6)}
+  .screen::before,.screen::after{content:"";position:absolute;width:8px;height:8px;background:#3a1c06;border:1px solid #6b4a2a;border-radius:50%;bottom:8px}
+  .screen::before{left:8px}.screen::after{right:8px}
+  .screen__bezel{position:relative;background:#0b120d;padding:0;overflow:hidden;box-shadow:inset 0 0 0 3px #060a07,inset 0 0 40px rgba(0,0,0,.6);aspect-ratio:16/9}
+  .screen canvas{width:100%;height:100%}
+  .screen__glass{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.09),transparent 26%);mix-blend-mode:screen}
+  .screen__play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(6,10,7,.32);opacity:0;transition:opacity .2s;cursor:pointer}
+  .screen:hover .screen__play{opacity:1}
+  .screen__play span{display:inline-flex;align-items:center;gap:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:15px;background:linear-gradient(180deg,var(--gold),var(--gold2));color:#3a1c06;padding:12px 22px;border:3px solid #3a1c06;box-shadow:4px 4px 0 0 rgba(58,28,6,.85)}
+  .screen__tag{position:absolute;top:22px;left:22px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);background:rgba(0,0,0,.5);padding:5px 9px;z-index:2;border:1px solid rgba(255,210,63,.3)}
+  @media(max-width:820px){.hero__grid{grid-template-columns:1fr;gap:32px}.hero{padding:96px 0 58px}.screen{order:-1}}
+
+  /* marquee */
+  .marquee{background:var(--pine);overflow:hidden;padding:13px 0;border-top:3px solid var(--grass2);border-bottom:3px solid var(--grassd)}
+  .marquee__track{display:flex;white-space:nowrap;width:max-content;animation:scroll 32s linear infinite}
+  .marquee__track span{font-family:var(--mono);font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.82);padding:0 24px}
+  .marquee__track b{color:var(--gold);font-weight:700}
+  .marquee .sep{display:inline-block;width:6px;height:6px;background:var(--grass);margin:0 4px 1px}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+
+  /* grass section divider */
+  .grass-band{height:14px;background:repeating-linear-gradient(90deg,var(--grass) 0 16px,var(--grass2) 16px 32px);
+    box-shadow:inset 0 4px 0 rgba(255,255,255,.14),inset 0 -5px 0 var(--grassd)}
+
+  .sec-head{max-width:640px;margin:0 auto 48px;text-align:center}
+  .sec-head p{font-size:18px}
+
+  .grid{display:grid;gap:22px}
+  .g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:900px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+  .card{background:var(--white);border:3px solid var(--pine);box-shadow:6px 6px 0 0 var(--shadow);padding:24px;
+    transition:transform .12s ease,box-shadow .12s ease}
+  .card:hover{transform:translate(-2px,-2px);box-shadow:9px 9px 0 0 var(--shadow)}
+  .card h3{color:var(--pine)}.card p{font-size:15px;margin:0;color:var(--muted)}
+  .card .ico{width:48px;height:48px;display:flex;align-items:center;justify-content:center;margin-bottom:15px;color:var(--pine);
+    background:linear-gradient(180deg,var(--cream2),var(--cream3));border:2px solid var(--pine);box-shadow:3px 3px 0 0 var(--shadow)}
+  .card .ico svg{width:27px;height:27px}
+  .nav__links a svg{display:block}
+
+  /* cup tiers */
+  .tier{background:var(--white);border:3px solid var(--pine);box-shadow:6px 6px 0 0 var(--shadow);padding:22px;position:relative;overflow:hidden;
+    transition:transform .12s}
+  .tier:hover{transform:translate(-2px,-2px)}
+  .tier__top{height:8px;margin:-22px -22px 18px;background:var(--tc,var(--gold));border-bottom:3px solid var(--pine)}
+  .tier .name{font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em;font-size:13px;color:var(--muted);font-weight:700}
+  .tier .price{font-size:36px;font-weight:900;letter-spacing:-.02em;margin:4px 0 2px;color:var(--pine)}
+  .tier .price small{font-size:15px;color:var(--muted);font-weight:600}
+  .tier .desc{font-size:14px;color:var(--gold2);font-weight:800;margin-bottom:16px}
+  .tier ul{list-style:none;margin:0;padding:0;font-size:14px}
+  .tier li{padding:8px 0;border-top:2px solid var(--cream3);color:var(--muted);display:flex;gap:9px;align-items:center}
+  .tier li::before{content:"◎";color:var(--gold2);font-size:12px}
+  .tier--gold{box-shadow:8px 8px 0 0 rgba(255,158,46,.7);transform:translateY(-8px);border-color:var(--pine)}
+  .tier--gold:hover{transform:translate(-2px,-10px)}
+  .flag{position:absolute;top:16px;right:-32px;transform:rotate(45deg);background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;padding:5px 36px;text-transform:uppercase;border-top:1px solid #ff8a86;border-bottom:1px solid var(--redd)}
+
+  /* onchain rows */
+  .feat{display:flex;gap:16px;align-items:flex-start;padding:20px;border:3px solid var(--pine);background:var(--white);box-shadow:5px 5px 0 0 var(--shadow)}
+  .feat .n{font-family:var(--mono);font-size:14px;color:#fff;background:var(--blu);min-width:38px;height:38px;display:flex;align-items:center;justify-content:center;flex:none;font-weight:800;border:2px solid var(--navy)}
+  .feat h3{color:var(--pine)}.feat p{font-size:14px;margin:0;color:var(--muted)}
+
+  /* token */
+  .token{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:center;background:var(--cream);
+    border:3px solid var(--pine);box-shadow:10px 10px 0 0 var(--shadow);padding:40px}
+  .token img{width:260px;margin:0 auto;filter:drop-shadow(0 14px 24px rgba(90,40,10,.35))}
+  .token h2{color:var(--pine)}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:var(--ember);padding:6px 12px;margin-bottom:16px;font-weight:800;border:2px solid var(--redd);box-shadow:3px 3px 0 0 rgba(120,40,10,.4)}
+  .token ul{list-style:none;margin:16px 0 0;padding:0}
+  .token li{padding:11px 0;border-top:2px solid var(--cream3);font-size:15px;color:var(--muted);display:flex;gap:11px}
+  .token li b{color:var(--pine)}
+  .token li::before{content:"→";color:var(--gold2);font-weight:800}
+  @media(max-width:760px){.token{grid-template-columns:1fr;padding:26px;text-align:center}.token img{width:150px}.token li{text-align:left}}
+
+  /* roadmap */
+  .road{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  @media(max-width:760px){.road{grid-template-columns:1fr}}
+  .road .card{background:var(--pine);border-color:#05140c;box-shadow:6px 6px 0 0 rgba(5,20,12,.7)}
+  .road .card h3,.road .card li{color:#fff}
+  .road .when{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-bottom:12px;font-weight:800}
+  .road ul{list-style:none;margin:0;padding:0;font-size:15px}
+  .road li{padding:8px 0;color:rgba(255,255,255,.85);display:flex;gap:10px}
+  .road li::before{content:"▪";color:var(--grass)}
+  .road .now .when{color:var(--grass)}
+  .road .now li::before{content:"●";color:var(--grass)}
+
+  /* final cta */
+  .cta-final{text-align:center;background:linear-gradient(180deg,var(--gold),var(--gold2))}
+  .cta-final h2{font-size:clamp(30px,5vw,52px);color:#3a1c06}
+  .cta-final .eyebrow{color:var(--redd)}
+  .cta-final p{color:#5a2f10;font-weight:600}
+  .cta-final .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+
+  /* footer */
+  footer{color:#fff;padding:46px 0 38px;border-top:4px solid #244d20;
+    background:linear-gradient(rgba(11,32,20,.5),rgba(11,32,20,.62)),repeating-linear-gradient(90deg,var(--grass2) 0 30px,var(--grassd) 30px 60px)}
+  .foot{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-start}
+  .foot .brand{color:#fff;text-shadow:none}.foot .brand img{width:30px;height:30px}
+  .foot p{color:rgba(255,255,255,.7)}
+  .foot__links{display:flex;gap:44px;flex-wrap:wrap}
+  .foot__links h4{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--gold);margin:0 0 12px;font-weight:800}
+  .foot__links a{display:block;color:rgba(255,255,255,.75);font-size:14px;padding:4px 0}
+  .foot__links a:hover{color:var(--gold)}
+  .foot__bottom{margin-top:34px;padding-top:22px;border-top:1px solid rgba(255,255,255,.12);text-align:center;color:rgba(255,255,255,.55);font-size:12.5px}
+  .legal{max-width:60ch;line-height:1.5}
+
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    .marquee__track,.cloud,.sun::before{animation:none}
+    .badge .dot{animation:none}html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="#top" aria-label="Copa del Sol"><img class="px brand-wordmark" src="/wordmark-line.png" alt="Copa del Sol"></a>
+    <nav class="nav__links">
+      <a href="#play">Play</a><a href="#cups">Cups</a><a href="#onchain">Onchain</a><a href="#token">$COPA</a>
+      <a href="https://x.com/PlayCopaDelSol" target="_blank" rel="noopener" aria-label="Copa del Sol on X"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    </nav>
+    <a class="btn btn--play btn--sm" href="/play/">Play free</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero on-dark">
+    <div class="hero__deco">
+      <div class="sun" id="sun"></div>
+      <div class="cloud c1" id="cl1"></div><div class="cloud c2" id="cl2"></div><div class="cloud c3" id="cl3"></div>
+    </div>
+    <div class="wrap hero__grid">
+      <div>
+        <div class="badge"><span class="dot"></span> Free 1v1 is live. No wallet required.</div>
+        <h1 class="vh">Copa del Sol</h1>
+        <img class="hero-crest px" src="/logo.png" alt="Copa del Sol" width="512" height="512">
+        <p>Onchain arcade soccer on Solana. Choose your nation, take the pitch, and compete for real SOL. Free to play, always.</p>
+        <div class="hero__cta">
+          <a class="btn btn--play" href="/play/">Play free now</a>
+          <a class="btn btn--ghostw" href="#play">How it works</a>
+        </div>
+        <div class="trust"><div><b>Free</b> 1v1 in-browser</div><div><b>Real SOL</b> cup prizes</div><div><b>Verifiable</b> onchain</div></div>
+      </div>
+      <div class="screen" id="screen">
+        <span class="screen__tag">● Live demo</span>
+        <div class="screen__bezel">
+          <canvas id="attract" width="320" height="180"></canvas>
+          <div class="screen__glass"></div>
+          <a class="screen__play" href="/play/"><span>Play</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true"><div class="marquee__track" id="marq"></div></div>
+
+  <section id="play">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="eyebrow">Pick up &amp; play</p>
+        <h2>Arcade soccer with one footballer and full control</h2>
+        <p>No lobbies and no downloads. Move with the arrow keys and hold to shoot. It takes seconds to pick up.</p>
+      </div>
+      <div class="grid g4">
+        <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.4l4.4 3.2-1.7 5.1H9.3l-1.7-5.1z"/><path d="M12 3v4.4M20.5 9.6l-3.8 1M16.7 15.7l2.4 3.1M7.3 15.7l-2.4 3.1M3.5 9.6l3.8 1"/></svg></div><h3>Instant to play</h3><p>Open your browser and you are on the pitch. Free 1v1 with no wallet and no signup.</p></div>
+        <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.7 2.9 2.7 15.1 0 18c-2.7-2.9-2.7-15.1 0-18z"/></svg></div><h3>Pick your nation</h3><p>Represent a national side and carry it through the bracket. One country per slot in every cup.</p></div>
+        <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6.5H4.5V8A2.5 2.5 0 0 0 7 10.5M17 6.5h2.5V8a2.5 2.5 0 0 1-2.5 2.5"/><path d="M12 14v3M9 20h6M9.5 20l.4-3h4.2l.4 3"/></svg></div><h3>Cups for real SOL</h3><p>Enter a paid cup and compete for real SOL. Pools are funded by players, with medals for the podium.</p></div>
+        <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14l4-4"/><path d="M12.6 6.6l1-1a4 4 0 0 1 5.7 5.7l-1 1"/><path d="M11.4 17.4l-1 1a4 4 0 0 1-5.7-5.7l1-1"/></svg></div><h3>Verifiable results</h3><p>Every result can be verified onchain. You never have to take our word for it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grass-band" aria-hidden="true"></div>
+
+  <section id="cups" class="on-dark" style="background:linear-gradient(180deg,var(--grass2),var(--grassd))">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="eyebrow">Tournament cups · coming soon</p>
+        <h2>Four tiers. One champion. Real SOL.</h2>
+        <p>Prize pools are funded by players, not the house. Ninety percent of every pool goes to the podium, and the remainder sustains the platform.</p>
+      </div>
+      <div class="grid g4">
+        <div class="tier reveal" style="--tc:#c88a4a"><div class="tier__top"></div><div class="name">Bronze</div><div class="price">0.1<small> ◎</small></div><div class="desc">Weekend warm-up</div><ul><li>8-player knockout</li><li>Podium medals</li><li>Player-funded pool</li></ul></div>
+        <div class="tier reveal" style="--tc:#c3ccd6"><div class="tier__top"></div><div class="name">Silver</div><div class="price">0.5<small> ◎</small></div><div class="desc">The main event</div><ul><li>16-player bracket</li><li>Golden Boot prize</li><li>Onchain payout</li></ul></div>
+        <div class="tier tier--gold reveal" style="--tc:#ffd23f"><div class="flag">Popular</div><div class="tier__top"></div><div class="name">Gold</div><div class="price">2<small> ◎</small></div><div class="desc">For contenders</div><ul><li>32-team group + KO</li><li>Bigger pools</li><li>Soulbound medal</li></ul></div>
+        <div class="tier reveal" style="--tc:#ff8a3a"><div class="tier__top"></div><div class="name">Legends</div><div class="price">10<small> ◎</small></div><div class="desc">The premier cup</div><ul><li>Elite field</li><li>Top prize pool</li><li>Champion's mark</li></ul></div>
+      </div>
+      <p style="text-align:center;margin-top:26px;font-size:13px;color:rgba(255,255,255,.75)">Prizes are paid onchain to the podium. Multiple cups run concurrently. Skill-based competition, geo-restricted where required, 18+.</p>
+    </div>
+  </section>
+
+  <div class="grass-band" aria-hidden="true"></div>
+
+  <section id="onchain" style="background:var(--cream2)">
+    <div class="wrap">
+      <div class="grid g2" style="gap:48px;align-items:center">
+        <div class="reveal">
+          <p class="eyebrow">Provably fair</p>
+          <h2>Fairness you can verify</h2>
+          <p class="lead">Copa del Sol runs on a deterministic engine. The same inputs always produce the same match, so every result can be independently verified onchain.</p>
+          <a class="btn btn--ghost" href="/play/">Play a free match</a>
+        </div>
+        <div class="grid reveal" style="gap:16px">
+          <div class="feat"><div class="n">01</div><div><h3>Deterministic engine</h3><p>The identical simulation runs in your browser and on the network, producing the same outcome every time.</p></div></div>
+          <div class="feat"><div class="n">02</div><div><h3>Replayable matches</h3><p>Any match can be replayed and checked against its onchain record. Tampered results do not hold up.</p></div></div>
+          <div class="feat"><div class="n">03</div><div><h3>Results and standings onchain</h3><p>Cups, brackets, and standings settle on Solana. Every bracket is public and every payout is automatic.</p></div></div>
+          <div class="feat"><div class="n">04</div><div><h3>Soulbound medals</h3><p>Podium finishes are minted as medals you keep, a permanent onchain record of your results.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grass-band" aria-hidden="true"></div>
+
+  <section id="token" style="background:linear-gradient(168deg,var(--ember),var(--amber) 60%,var(--sun))">
+    <div class="wrap">
+      <div class="token reveal">
+        <img class="px" src="/logo.png" alt="Copa del Sol crest">
+        <div>
+          <span class="chip">$COPA · coming soon</span>
+          <h2>A token for access, not advantage</h2>
+          <p style="color:var(--muted)">A native token on pump.fun that provides access and status, with no effect on gameplay.</p>
+          <ul>
+            <li><span><b>Hold to enter.</b> A small balance grants access to paid cups. Free 1v1 never requires a wallet.</span></li>
+            <li><span><b>Wear your colors.</b> Customize your kit and national colors. Cosmetic only.</span></li>
+            <li><span><b>Status, not power.</b> Holdings and cosmetics affect access and identity only, never gameplay.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grass-band" aria-hidden="true"></div>
+
+  <section id="roadmap" class="on-dark" style="background:linear-gradient(180deg,var(--pine),var(--pine2))">
+    <div class="wrap">
+      <div class="sec-head reveal"><p class="eyebrow">The road ahead</p><h2>Where Copa del Sol is headed</h2></div>
+      <div class="road">
+        <div class="card reveal now"><div class="when">Live now</div><ul><li>Free 1v1 in the browser</li><li>Arcade engine and controls</li><li>A playable pitch</li></ul></div>
+        <div class="card reveal"><div class="when">Next</div><ul><li>Paid SOL cups and brackets</li><li>National teams</li><li>$COPA launch on pump.fun</li></ul></div>
+        <div class="card reveal"><div class="when">Later</div><ul><li>Global leaderboards</li><li>Seasons and community cups</li><li>Squad cups, 2v2 to 5v5</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grass-band" aria-hidden="true"></div>
+
+  <section class="cta-final">
+    <div class="wrap reveal">
+      <p class="eyebrow" style="justify-content:center">The onchain copa · 2026</p>
+      <h2>Ready to take the pitch?</h2>
+      <p style="max-width:34ch;margin-inline:auto">Play a free 1v1 right now. Cups and $COPA are coming.</p>
+      <div class="btns">
+        <a class="btn btn--dark" href="/play/">Play free now</a>
+        <a class="btn btn--ghost" href="https://x.com/PlayCopaDelSol" target="_blank" rel="noopener">Follow @PlayCopaDelSol</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div style="max-width:300px">
+        <a class="brand" href="#top"><img class="px" src="/logo.png" alt="Copa del Sol crest"><span>Copa del Sol</span></a>
+        <p style="margin-top:14px;font-size:14px">Onchain arcade soccer on Solana. Pick your nation, win real SOL.</p>
+      </div>
+      <div class="foot__links">
+        <div><h4>Game</h4><a href="/play/">Play free</a><a href="#cups">Cups</a><a href="#onchain">Onchain</a></div>
+        <div><h4>Token</h4><a href="#token">$COPA</a><a href="#roadmap">Roadmap</a></div>
+        <div><h4>Connect</h4><a href="https://x.com/PlayCopaDelSol" target="_blank" rel="noopener">X</a><a href="mailto:hello@copadelsol.com">hello@copadelsol.com</a></div>
+      </div>
+    </div>
+    <div class="foot__bottom">
+      <div>© 2026 Copa del Sol · Onchain arcade soccer on Solana</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav=document.getElementById('nav');
+  const onScroll=()=>nav.classList.toggle('scrolled',scrollY>12);
+  onScroll();addEventListener('scroll',onScroll,{passive:true});
+
+  const items=[['Free 1v1'],['Pick your nation'],['Bronze','0.1 ◎'],['Silver','0.5 ◎'],['Gold','2 ◎'],['Legends','10 ◎'],['Onchain verifiable'],['Real SOL prizes']];
+  const build=()=>items.map(([a,b])=>`<span>${a}${b?' <b>'+b+'</b>':''}</span><span class="sep"></span>`).join('');
+  document.getElementById('marq').innerHTML=build()+build();
+
+  const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // parallax sun + clouds
+  const reduceM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const sun=document.getElementById('sun'),cl=[document.getElementById('cl1'),document.getElementById('cl2'),document.getElementById('cl3')];
+  if(!reduceM){addEventListener('scroll',()=>{const y=scrollY;if(y<900){sun.style.transform='translateY('+(y*0.22)+'px)';cl.forEach((c,i)=>{if(c)c.style.marginTop=(y*(0.06+i*0.03))+'px';});}},{passive:true});}
+
+  (function(){
+    const cv=document.getElementById('attract'),g=cv.getContext('2d');
+    g.imageSmoothingEnabled=false;
+    const W=320,H=180;
+    const P={gA:'#6bbe4a',gB:'#57a03c',gC:'#79c957',line:'#eef3e0',netbg:'#20304a',net:'#cfe0ff',post:'#f4f4ec',
+      wall:'#3b3350',wallD:'#2a2540',crowd:['#d9556b','#e7c15a','#5aa0e0','#7bcf6a','#c98adf','#e0864a'],
+      red:'#d8443f',redD:'#9e2b28',redH:'#ff7d6b',blu:'#3a76d8',bluD:'#23468f',bluH:'#7fb0ff',
+      kee:'#ffcf33',skin:'#f2c290',hair:'#3a2417',short:'#f0f2f6',boot:'#20242e',
+      shadow:'rgba(0,0,0,.26)',ballW:'#fbfbf7',ballK:'#222634',sky:'#0b0d12',gold:'#ffd23f',wht:'#f4f6ff'};
+    const px=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(x|0,y|0,w|0,h|0);};
+    const PT={x:12,y:14,w:296,h:152},R=PT.x+PT.w,B=PT.y+PT.h,cx=PT.x+PT.w/2,cy=PT.y+PT.h/2;
+    const GM=42,gT=cy-GM/2,gB2=cy+GM/2;
+    function grass(){for(let x=PT.x;x<R;x+=8){const i=((x-PT.x)/8)|0;px(x,PT.y,8,PT.h,i%2?P.gB:P.gA);
+      for(let k=0;k<7;k++){const rx=x+((i*13+k*7)%8),ry=PT.y+((i*29+k*31)%PT.h);px(rx,ry,1,1,i%2?P.gA:P.gC);}}}
+    function marks(){const L=(a,b,c,d)=>px(a,b,c,d,P.line);
+      L(PT.x,PT.y,PT.w,1);L(PT.x,B-1,PT.w,1);L(PT.x,PT.y,1,PT.h);L(R-1,PT.y,1,PT.h);L(cx,PT.y,1,PT.h);
+      for(let a=0;a<360;a+=8)px(cx+Math.cos(a*Math.PI/180)*20,cy+Math.sin(a*Math.PI/180)*20,1,1,P.line);
+      box(PT.x,1);box(R,-1);}
+    function box(gx,d){const bw=38,bh=84,by=cy-bh/2,sx=d>0?gx:gx-bw;
+      px(sx,by,1,bh,P.line);px(sx,by,bw,1,P.line);px(sx,by+bh-1,bw,1,P.line);}
+    function goal(gx,left,fl){const d=7,x=left?gx-d:gx;px(x,gT,d,GM,P.netbg);
+      for(let i=0;i<=d;i+=3)px(x+i,gT,1,GM,P.net);for(let j=0;j<=GM;j+=4)px(x,gT+j,d,1,P.net);
+      px(left?gx-d:gx,gT-1,d+1,2,P.post);px(left?gx-1:gx-1,gT-1,2,GM+2,P.post);
+      if(fl>0)px(x,gT,d,GM,'rgba(255,255,255,'+fl+')');}
+    function frame(){px(0,PT.y-5,W,5,P.wallD);px(0,B,W,H-B,P.wallD);
+      for(let i=0;i<W;i+=3){px(i,PT.y-4,2,2,P.crowd[(i*7)%6]);px(i,B+1,2,2,P.crowd[(i*5)%6]);}
+      px(0,PT.y-5,4,PT.h+10,P.wall);px(W-4,PT.y-5,4,PT.h+10,P.wall);}
+    const kit=t=>t==='red'?[P.red,P.redD,P.redH]:t==='blu'?[P.blu,P.bluD,P.bluH]:[P.kee,'#c79a12',P.wht];
+    function man(fx,fy,face,t,run,kick){const K=kit(t),s=Math.sin(run)*1.6,s2=Math.sin(run+Math.PI)*1.6;
+      const skinD='#d99f68',sock='#eef1f6',shortD='#c9ccd6',D=P.wallD;
+      g.fillStyle=P.shadow;g.beginPath();g.ellipse(fx,fy+1,6,2.6,0,0,7);g.fill();
+      const bx=fx-4,top=fy-15,lL=s>0?1:0,rL=s2>0?1:0;
+      px(bx+1,fy-5,2,4-lL,P.skin);px(bx+1,fy-5,1,4-lL,skinD);
+      px(bx+5,fy-5,2,4-rL,P.skin);px(bx+6,fy-5,1,4-rL,skinD);
+      px(bx+1,fy-2-lL,2,1,sock);px(bx+5,fy-2-rL,2,1,sock);
+      px(bx+1,fy-1-lL,2,1,P.boot);px(bx+5,fy-1-rL,2,1,P.boot);
+      px(bx+1,fy-7,6,1,'#3a3d47');px(bx+1,fy-6,6,1,'#23262e');px(bx+1,fy-5,2,1,'#23262e');px(bx+5,fy-5,2,1,'#23262e');
+      px(bx-1,top+5,10,3,D);px(bx,top+5,8,1,K[2]);px(bx,top+6,8,2,K[0]);px(bx+1,top+7,6,1,K[1]);
+      const a=kick?3:0;px(bx-1,top+5,1,1,K[0]);px(bx+8,top+5,1,1,K[0]);px(bx-1,top+6-a,1,3,P.skin);px(bx+8,top+6+a,1,3,P.skin);
+      px(bx+3,top+4,2,1,skinD);
+      px(bx+1,top,6,5,P.skin);px(bx+1,top,6,2,P.hair);px(bx+1,top+1,1,1,P.hair);px(bx+6,top+1,1,1,P.hair);
+      if(face==='up')px(bx+1,top,6,3,P.hair);
+      else if(face==='left'){px(bx+2,top+3,1,1,D);px(bx+1,top,3,3,P.hair);}
+      else if(face==='right'){px(bx+5,top+3,1,1,D);px(bx+3,top,3,3,P.hair);}
+      else{px(bx+2,top+3,1,1,D);px(bx+5,top+3,1,1,D);}
+      px(bx+3,top+6,2,2,K[2]);}
+    function ball(x,y,h,sp){const k=Math.max(.5,1-h*.03);g.fillStyle=P.shadow;g.beginPath();g.ellipse(x,y,3*k,1.5*k,0,0,7);g.fill();
+      const yy=y-2-h;px(x-2,yy-2,4,4,P.ballW);px(x-2,yy-2,4,1,'#dfe3ee');
+      const s=(sp|0)%3;px(x-1,yy-1,1,1,P.ballK);px(x+1,yy+(s===1?1:0),1,1,P.ballK);px(x+(s===2?1:0),yy+1,1,1,P.ballK);}
+
+    let sparks=[],flashL=0,flashR=0,t=0;
+    let bx,by,bvx,bvy,bh,bvh,owner,cool,spin,red,blu,kL,kR;
+    const face=(dx,dy)=>Math.abs(dx)>=Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');
+    function reset(dir){bx=cx;by=cy;bvx=(dir||1)*0.4;bvy=0;bh=0;bvh=0;owner=null;cool=24;spin=0;
+      red={x:cx-46,y:cy+10,run:0,face:'right'};blu={x:cx+46,y:cy-10,run:0,face:'left'};
+      kL={x:PT.x+7,y:cy};kR={x:R-7,y:cy};}
+    reset(1);
+    function chase(p,tx,ty,sp){const dx=tx-p.x,dy=ty-p.y,m=Math.hypot(dx,dy)||1;p.x+=dx/m*sp;p.y+=dy/m*sp;p.face=face(dx,dy);p.run+=.3;
+      p.x=Math.max(PT.x+4,Math.min(R-4,p.x));p.y=Math.max(PT.y+4,Math.min(B-4,p.y));}
+    function shoot(p,gx){const gy=cy+(Math.random()*GM-GM*.6);const dx=gx-p.x,dy=gy-p.y,m=Math.hypot(dx,dy)||1;
+      owner=null;bvx=dx/m*4.2;bvy=dy/m*4.2;bvh=1.0+Math.random()*.8;cool=16;}
+    function step(){t++;if(cool>0)cool--;
+      if(owner==='red'){bx=red.x+6;by=red.y;chase(red,R-30,cy+(Math.sin(t*.05)*24),1.15);if(red.x>R-70&&Math.random()<.05)shoot(red,R);}
+      else if(owner==='blu'){bx=blu.x-6;by=blu.y;chase(blu,PT.x+30,cy+(Math.cos(t*.05)*24),1.1);if(blu.x<PT.x+70&&Math.random()<.05)shoot(blu,PT.x);}
+      else{chase(red,bx,by,1.05);chase(blu,bx,by,1.0);
+        bx+=bvx;by+=bvy;bvx*=.97;bvy*=.97;bh+=bvh;bvh-=.16;if(bh<0){bh=0;bvh=-bvh*.5;if(Math.abs(bvh)<.4)bvh=0;}
+        spin+=Math.hypot(bvx,bvy)*.3;
+        if(by<PT.y){by=PT.y;bvy=Math.abs(bvy)*.7;}if(by>B){by=B;bvy=-Math.abs(bvy)*.7;}
+        if(bx<PT.x){if(by>gT&&by<gB2&&bh<9){goalL();}else{bx=PT.x;bvx=Math.abs(bvx)*.7;}}
+        if(bx>R){if(by>gT&&by<gB2&&bh<9){goalR();}else{bx=R;bvx=-Math.abs(bvx)*.7;}}
+        if(cool<=0&&bh<6){const dr=Math.hypot(bx-red.x,by-red.y),db=Math.hypot(bx-blu.x,by-blu.y);
+          if(dr<10&&dr<=db)owner='red';else if(db<10)owner='blu';}}
+      kL.y+=((Math.max(gT+4,Math.min(gB2-4,by))-kL.y))*.09;
+      kR.y+=((Math.max(gT+4,Math.min(gB2-4,by))-kR.y))*.09;
+      if(owner==null&&bh<8){if(bx<PT.x+26&&bvx<0&&Math.hypot(bx-kL.x,by-kL.y)<11){owner=null;bvx=3.2;bvy=(Math.random()*2-1)*1.5;bvh=1.8;cool=16;}
+        if(bx>R-26&&bvx>0&&Math.hypot(bx-kR.x,by-kR.y)<11){owner=null;bvx=-3.2;bvy=(Math.random()*2-1)*1.5;bvh=1.8;cool=16;}}
+      if(owner==='red'&&Math.hypot(blu.x-red.x,blu.y-red.y)<8&&cool<=0&&Math.random()<.06){owner='blu';cool=8;}
+      else if(owner==='blu'&&Math.hypot(red.x-blu.x,red.y-blu.y)<8&&cool<=0&&Math.random()<.06){owner='red';cool=8;}
+      flashL*=.92;flashR*=.92;
+      sparks=sparks.filter(s=>s.l>0);for(const s of sparks){s.x+=s.vx;s.y+=s.vy;s.vy+=.05;s.l-=.03;}}
+    function burst(x,y){for(let i=0;i<14;i++)sparks.push({x,y,vx:Math.cos(i)*(.6+Math.random()),vy:Math.sin(i)*(.6+Math.random())-.4,l:1,c:[P.gold,P.wht,P.red][i%3]});}
+    function goalL(){flashL=1;burst(bx,by);reset(1);}
+    function goalR(){flashR=1;burst(bx,by);reset(-1);}
+    function draw(){px(0,0,W,H,P.sky);frame();grass();marks();
+      goal(PT.x,true,flashL);goal(R,false,flashR);
+      const A=[{y:kL.y,f:()=>man(kL.x,kL.y,'right','kee',0,false)},
+        {y:kR.y,f:()=>man(kR.x,kR.y,'left','kee',0,false)},
+        {y:red.y,f:()=>man(red.x,red.y,red.face,'red',red.run,owner==='red'&&cool>10)},
+        {y:blu.y,f:()=>man(blu.x,blu.y,blu.face,'blu',blu.run,owner==='blu'&&cool>10)},
+        {y:by-bh,f:()=>ball(bx,by,bh,spin)}];
+      A.sort((a,b)=>a.y-b.y);for(const a of A)a.f();
+      for(const s of sparks)px(s.x,s.y,1,1,s.c);
+      for(let y=PT.y;y<B;y+=2)px(0,y,W,1,'rgba(0,0,0,0.04)');}
+    const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+    const STEP=1000/60;let acc=0,last=performance.now();
+    function loop(now){let dt=now-last;last=now;if(dt>100)dt=100;
+      if(!reduce){acc+=dt;while(acc>=STEP){step();acc-=STEP;}}
+      draw();requestAnimationFrame(loop);}
+    if(reduce){step();draw();}else requestAnimationFrame(loop);
+  })();
+</script>
+</body>
+</html>

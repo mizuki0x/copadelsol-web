@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Copa del Sol</title>
+
+<script type="module">
+import init, * as bindings from '/game/copa-client-8d9c652b7114f90e.js';
+const wasm = await init({ module_or_path: '/game/copa-client-8d9c652b7114f90e_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+<style>
+  html,body{margin:0;height:100%;background:#0b0e12;overflow:hidden}
+  canvas{display:block;outline:none}
+  #boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    color:#8d97a1;font:14px ui-monospace,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase}
+</style>
+<link rel="modulepreload" href="/game/copa-client-8d9c652b7114f90e.js" crossorigin="anonymous" integrity="sha384-C5dys2KxgXLG8a4QSKv2s9e4IIo/tG4hQPSCsNxnBJ0JsRB8XDa+cWH63zGwDGgd"><link rel="preload" href="/game/copa-client-8d9c652b7114f90e_bg.wasm" crossorigin="anonymous" integrity="sha384-JKgFlyr1dW6+1WQehrKLz6cfVbO5JqPU2GwJAurD+s7qo4dhQ81oydUfPaqQBQrd" as="fetch" type="application/wasm"></head>
+<body>
+  <div id="boot">loading copa del sol…</div>
+  <script>addEventListener('TrunkApplicationStarted',()=>{const b=document.getElementById('boot');if(b)b.remove();});</script>
+  <script>
+  // Chain feed: poll getProgramAccounts and hand complete snapshots to the
+  // app through the wasm bridge (main.rs `feed_bridge`). This page is the
+  // ONLY transport-aware line in the client — everything below the bridge
+  // is transport-free Rust with its own tests. The frame layout here is
+  // pinned by its byte-exact Rust twin, `fetch::encode_frame`; if the two
+  // ever drift, `copa_feed` rejects the frame whole and the app keeps its
+  // last good snapshot. Nothing in this block may throw into the app.
+  addEventListener('TrunkApplicationStarted', () => {
+    const rpc = new URLSearchParams(location.search).get('rpc')
+      || 'http://127.0.0.1:8899';
+    const BASE_MS = 2000;   // devnet-friendly poll; the Rust content gate
+    const MAX_MS = 16000;   // makes identical polls near-free
+    let wait = BASE_MS;
+    let last = '';          // last delivered payload (dedupe, saves a parse)
+
+    // (base58 address, bytes) pairs -> one CPF1 frame. Twin of
+    // fetch::encode_frame: magic, u32 LE count, then per account
+    // u8 addr-len | addr | u32 LE data-len | data.
+    const enc = new TextEncoder();
+    function frame(accounts) {
+      // Encode addresses to utf8 bytes up front so the length prefix and the
+      // bytes written always agree (base58 is ASCII, so this equals the char
+      // length — but the length byte must count bytes, matching the Rust twin).
+      const encoded = accounts.map(([addr, data]) => [enc.encode(addr), data]);
+      let size = 8;
+      for (const [a, data] of encoded) size += 1 + a.length + 4 + data.length;
+      const out = new Uint8Array(size);
+      const view = new DataView(out.buffer);
+      out.set(enc.encode('CPF1'), 0);
+      view.setUint32(4, encoded.length, true);
+      let at = 8;
+      for (const [a, data] of encoded) {
+        out[at++] = a.length;
+        out.set(a, at); at += a.length;
+        view.setUint32(at, data.length, true); at += 4;
+        out.set(data, at); at += data.length;
+      }
+      return out;
+    }
+
+    async function poll() {
+      try {
+        const res = await fetch(rpc, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          signal: AbortSignal.timeout(8000),
+          body: JSON.stringify({
+            jsonrpc: '2.0', id: 1, method: 'getProgramAccounts',
+            params: [window.wasmBindings.copa_program_id(),
+                     { encoding: 'base64', commitment: 'confirmed' }],
+          }),
+        });
+        const body = await res.json();
+        if (body.error) throw new Error('rpc: ' + body.error.message);
+        // Sort before comparing AND encoding: RPC result order is transport
+        // noise, and both dedupe lines (this one and the Rust content gate)
+        // compare in frame order.
+        const value = (body.result || []).slice()
+          .sort((a, b) => a.pubkey < b.pubkey ? -1 : 1);
+        const key = JSON.stringify(value);
+        if (key !== last) {
+          window.wasmBindings.copa_feed(frame(value.map(({ pubkey, account }) =>
+            [pubkey, Uint8Array.from(atob(account.data[0]), c => c.charCodeAt(0))])));
+          last = key;
+        }
+        wait = BASE_MS;
+      } catch (e) {
+        // The scenes render the last good snapshot; just slow down and say why.
+        wait = Math.min(wait * 2, MAX_MS);
+        console.warn('copa feed: poll failed, next in ' + wait + 'ms —', e);
+      }
+      setTimeout(poll, wait);
+    }
+    poll();
+  });
+  </script>
+</body>
+</html>

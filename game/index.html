@@ -6,8 +6,8 @@
 <title>Copa del Sol</title>
 
 <script type="module">
-import init, * as bindings from '/game/copa-client-8d9c652b7114f90e.js';
-const wasm = await init({ module_or_path: '/game/copa-client-8d9c652b7114f90e_bg.wasm' });
+import init, * as bindings from '/game/copa-client-d6f9ac3b0588d158.js';
+const wasm = await init({ module_or_path: '/game/copa-client-d6f9ac3b0588d158_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -22,7 +22,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
   #boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
     color:#8d97a1;font:14px ui-monospace,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase}
 </style>
-<link rel="modulepreload" href="/game/copa-client-8d9c652b7114f90e.js" crossorigin="anonymous" integrity="sha384-C5dys2KxgXLG8a4QSKv2s9e4IIo/tG4hQPSCsNxnBJ0JsRB8XDa+cWH63zGwDGgd"><link rel="preload" href="/game/copa-client-8d9c652b7114f90e_bg.wasm" crossorigin="anonymous" integrity="sha384-JKgFlyr1dW6+1WQehrKLz6cfVbO5JqPU2GwJAurD+s7qo4dhQ81oydUfPaqQBQrd" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/game/copa-client-d6f9ac3b0588d158.js" crossorigin="anonymous" integrity="sha384-VpgXeyzrx5VKEn4wccmw2VbF/kEdMxaPKWCHmkz3+hAxHFdJUF8s2nejfKd6WspX"><link rel="preload" href="/game/copa-client-d6f9ac3b0588d158_bg.wasm" crossorigin="anonymous" integrity="sha384-jJ5tEfQ1CiY7RZC6KmWULIhI8pOoKTEJ3s/8SdOlxv6bmmOWnEDB96VDZAOGxvrn" as="fetch" type="application/wasm"></head>
 <body>
   <div id="boot">loading copa del sol…</div>
   <script>addEventListener('TrunkApplicationStarted',()=>{const b=document.getElementById('boot');if(b)b.remove();});</script>

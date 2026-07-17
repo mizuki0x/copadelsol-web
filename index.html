@@ -57,6 +57,9 @@
   .on-dark h2,.on-dark h3{color:var(--white)}
   .on-dark .eyebrow{color:var(--sky)}
   .on-dark p{color:rgba(226,233,255,.82)}
+  .sec-dark .eyebrow{color:var(--sky)}
+  .sec-dark .sec-head h2{color:#fff}
+  .sec-dark .sec-head p{color:rgba(226,233,255,.82)}
 
   /* wordmark — blue band, white italic anton */
   .wm{display:inline-flex;align-items:center;background:var(--blue);padding:.30em .46em .36em;line-height:1}
@@ -98,9 +101,8 @@
   .hero{padding:124px 0 82px;position:relative;overflow:hidden;color:var(--ink);background:#eef3ff}
   .hero__deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
   .hero__deco::before{content:"";position:absolute;inset:-1px;
-    background-image:linear-gradient(rgba(53,82,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(53,82,255,.12) 1px,transparent 1px);
-    background-size:34px 34px;animation:gridpan 7s linear infinite}
-  @keyframes gridpan{to{background-position:34px 34px}}
+    background-image:linear-gradient(rgba(53,82,255,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(53,82,255,.09) 1px,transparent 1px);
+    background-size:4px 4px}
   .hero__deco .bl{position:absolute;top:0;height:100%;width:9px;background:var(--blue);opacity:.45}
   .hero__deco .bl.l{left:35%}
   .hero__deco .bl.r{left:65%}
@@ -158,15 +160,14 @@
   .card .ico svg{width:26px;height:26px}
 
   /* fights */
-  .fights{background:linear-gradient(180deg,var(--arena2),var(--arena));overflow:hidden}
+  .fights{background:var(--ice2);overflow:hidden}
   .fight-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:8px}
   @media(max-width:820px){.fight-steps{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:480px){.fight-steps{grid-template-columns:1fr}}
-  .step{background:rgba(255,255,255,.04);border:2px solid rgba(125,144,255,.3);padding:22px 20px;position:relative}
-  .step .k{font-family:var(--mono);font-size:12px;color:var(--sky);letter-spacing:.14em;font-weight:700}
-  .step h3{margin:12px 0 7px}
-  .step p{font-size:14px;color:rgba(226,233,255,.78);margin:0}
-  .step h3{color:#fff}
+  .step{background:var(--white);border:3px solid var(--ink);box-shadow:6px 6px 0 0 var(--shadow-i);padding:22px 20px;position:relative}
+  .step .k{font-family:var(--mono);font-size:12px;color:var(--blue);letter-spacing:.14em;font-weight:700}
+  .step h3{margin:12px 0 7px;color:var(--ink)}
+  .step p{font-size:14px;color:var(--muted);margin:0}
 
   /* modes */
   .mode{background:var(--white);border:3px solid var(--ink);box-shadow:6px 6px 0 0 var(--shadow-i);padding:26px;position:relative;overflow:hidden;transition:transform .12s}
@@ -294,7 +295,7 @@
 
   <div class="marquee" aria-hidden="true"><div class="marquee__track" id="marq"></div></div>
 
-  <section id="play">
+  <section id="play" class="sec-dark" style="background:linear-gradient(180deg,var(--arena),var(--arena2))">
     <div class="wrap">
       <div class="sec-head reveal">
         <p class="eyebrow">Pick up &amp; play</p>
@@ -310,7 +311,7 @@
     </div>
   </section>
 
-  <section id="fights" class="fights on-dark">
+  <section id="fights" class="fights">
     <div class="wrap">
       <div class="sec-head reveal">
         <p class="eyebrow">Drop the gloves</p>
@@ -326,7 +327,7 @@
     </div>
   </section>
 
-  <section id="modes" style="background:var(--ice2)">
+  <section id="modes" class="sec-dark" style="background:var(--arena2)">
     <div class="wrap">
       <div class="sec-head reveal">
         <p class="eyebrow">Three ways to play</p>

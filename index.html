@@ -526,21 +526,21 @@
       if(face==='left')px(bx+2,top+3,1,1,P.dark);else if(face==='right')px(bx+5,top+3,1,1,P.dark);
       else{px(bx+2,top+3,1,1,P.dark);px(bx+5,top+3,1,1,P.dark);}}
     function goalie(gx,left){const dir=left?1:-1,fx=gx+dir*4,fy=gy(),BK='#0b0d16',TR='#e8edff';
-      g.fillStyle='rgba(10,18,48,.30)';g.beginPath();g.ellipse(fx,fy+8,9,2.8,0,0,7);g.fill();
-      // big black leg pads with white trim — the goalie stack
-      px(fx-5,fy-1,4,9,BK);px(fx+1,fy-1,4,9,BK);
-      px(fx-4,fy-1,1,9,TR);px(fx+2,fy-1,1,9,TR);
-      px(fx-5,fy+8,4,1,P.dark);px(fx+1,fy+8,4,1,P.dark);
-      // bulky chest protector
-      px(fx-5,fy-9,10,8,BK);px(fx-5,fy-9,10,1,TR);px(fx-1,fy-7,2,4,P.steel);
-      // blocker (front) + catch glove (round)
-      px(fx+dir*5,fy-8,3,6,BK);px(fx+dir*5,fy-8,3,1,TR);
-      g.fillStyle=BK;g.beginPath();g.arc(fx-dir*6,fy-4,3,0,7);g.fill();
-      // masked head with a cage
-      px(fx-2,fy-14,5,5,BK);px(fx-2,fy-14,5,1,TR);
-      px(fx-1,fy-12,3,1,TR);px(fx,fy-11,1,1,'rgba(232,237,255,.5)');
-      // paddle along the ice
-      px(fx+dir*2,fy+6,dir*7,2,P.stick);}
+      g.fillStyle='rgba(10,18,48,.34)';g.beginPath();g.ellipse(fx,fy+5,12,3,0,0,7);g.fill();
+      // butterfly leg pads — wide, square, flared at the base (calf-kneed crouch)
+      px(fx-6,fy-1,5,5,BK);px(fx+1,fy-1,5,5,BK);
+      px(fx-8,fy+2,7,3,BK);px(fx+1,fy+2,7,3,BK);
+      px(fx-5,fy-1,1,6,TR);px(fx+3,fy-1,1,6,TR);
+      px(fx-8,fy+5,7,1,P.dark);px(fx+1,fy+5,7,1,P.dark);
+      // bulky square chest + shoulders, low and wide
+      px(fx-7,fy-8,14,7,BK);px(fx-7,fy-8,14,1,TR);px(fx-1,fy-6,2,3,P.steel);
+      // blocker + trapper out to the sides
+      px(fx-9,fy-7,2,5,BK);px(fx+7,fy-7,2,5,BK);
+      g.fillStyle=BK;g.beginPath();g.arc(fx+dir*9,fy-4,3,0,7);g.fill();
+      // low masked head, short neck (squat, not tall)
+      px(fx-2,fy-11,5,4,BK);px(fx-2,fy-11,5,1,TR);px(fx-1,fy-9,3,1,TR);
+      // paddle on the ice
+      px(fx+dir*3,fy+3,dir*8,2,P.stick);}
     let gyv=cy;const gy=()=>gyv;
     function puck(x,y,h){g.fillStyle='rgba(10,18,48,.25)';g.beginPath();g.ellipse(x,y,3,1.4,0,0,7);g.fill();
       px(x-2,y-2-h,4,3,P.puck);px(x-2,y-2-h,4,1,'#33384a');}

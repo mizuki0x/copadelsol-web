@@ -6,8 +6,8 @@
 <title>The Blue Line</title>
 
 <script type="module">
-import init, * as bindings from '/game/copa-client-d61d068236814c53.js';
-const wasm = await init({ module_or_path: '/game/copa-client-d61d068236814c53_bg.wasm' });
+import init, * as bindings from '/game/copa-client-4462de699ec6c53.js';
+const wasm = await init({ module_or_path: '/game/copa-client-4462de699ec6c53_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -38,7 +38,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
       border:1px solid #e7edf3;color:#e7edf3;text-decoration:none;text-transform:uppercase}
   }
 </style>
-<link rel="modulepreload" href="/game/copa-client-d61d068236814c53.js" crossorigin="anonymous" integrity="sha384-yUJ6RDyDMJO8fE7IFl7kna6Zc30Rf/h/Jw7Hwc5mqDw/5rclSzCq793X+BNn0Siy"><link rel="preload" href="/game/copa-client-d61d068236814c53_bg.wasm" crossorigin="anonymous" integrity="sha384-9xm6Is3NJUlgrLH9v0fARBpcQEM0W2gP4M6ybo93tnKDCM9QzmZyXfurkC36LSD4" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/game/copa-client-4462de699ec6c53.js" crossorigin="anonymous" integrity="sha384-yUJ6RDyDMJO8fE7IFl7kna6Zc30Rf/h/Jw7Hwc5mqDw/5rclSzCq793X+BNn0Siy"><link rel="preload" href="/game/copa-client-4462de699ec6c53_bg.wasm" crossorigin="anonymous" integrity="sha384-MsZJfmWOjFOC6WqTsgEEp68E/3DCUmSyNIkZ4mFrAZCVZx50dl1ObVT2i8dE05t2" as="fetch" type="application/wasm"></head>
 <body>
   <div id="boot">loading the blue line…</div>
   <div id="desktop-note">

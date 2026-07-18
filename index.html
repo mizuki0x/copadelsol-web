@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Blue Line | Onchain arcade hockey on Base</title>
-<meta name="description" content="Onchain arcade hockey on Base. Pick your club, play free 1v1 in your browser, drop the gloves, and settle real USDC on the ice. Every match verifiable onchain.">
+<meta name="description" content="Play fast, skill-based arcade hockey in your desktop browser. Free 1v1 is live, with deterministic replays and USDC competition in development on Base.">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -15,7 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Blue Line | Onchain arcade hockey on Base">
-<meta property="og:description" content="Pick your club, play free 1v1, drop the gloves, settle real USDC on the ice. Every match verifiable onchain.">
+<meta property="og:description" content="Play free 1v1 in your desktop browser. Deterministic arcade hockey, live today.">
 <meta property="og:image" content="/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -265,7 +265,7 @@
       <a href="#play">Play</a><a href="#fights">Fights</a><a href="#modes">Modes</a><a href="#clubs">Clubs</a><a href="#onchain">Onchain</a><a href="#token">$BLINE</a>
       <a href="https://x.com/BlueLineBase" target="_blank" rel="noopener" aria-label="The Blue Line on X"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
     </nav>
-    <a class="btn btn--dark btn--sm" href="#cta">Get early access</a>
+    <a class="btn btn--dark btn--sm" href="/game/">Play free</a>
   </div>
 </header>
 
@@ -277,22 +277,22 @@
     </div>
     <div class="wrap hero__grid">
       <div>
-        <div class="badge"><span class="dot"></span> Onchain arcade hockey · launching next week</div>
+        <div class="badge"><span class="dot"></span> Free desktop beta is live · no wallet required</div>
         <h1 class="hero-h1">Drop the gloves.<br>Settle it onchain.</h1>
-        <p class="tag">Fast, skill-based arcade hockey. Pick your club, play head-to-head for real USDC, and drop the gloves when it counts — every match deterministic and verifiable onchain.</p>
+        <p class="tag">Fast, skill-based arcade hockey built for the desktop browser. Take the ice, control every shift, and drop the gloves when it counts. Every match runs on a deterministic simulation.</p>
         <div class="hero__cta">
-          <a class="btn btn--dark" href="#cta">Get early access</a>
+          <a class="btn btn--dark" href="/game/">Play free now</a>
           <a class="btn btn--ghost" href="#play">How it works</a>
         </div>
-        <div class="trust"><div><b>Free</b> 1v1 in-browser</div><div><b>Real USDC</b> on Base</div><div><b>Verifiable</b> onchain</div></div>
+        <div class="trust"><div><b>Free</b> desktop 1v1</div><div><b>Deterministic</b> replay engine</div><div><b>USDC</b> competition in build</div></div>
       </div>
-      <div class="screen" id="screen">
-        <span class="screen__tag">● Live demo</span>
+      <a class="screen" id="screen" href="/game/" aria-label="Play The Blue Line">
+        <span class="screen__tag">● Play live</span>
         <div class="screen__bezel">
           <canvas id="attract" width="320" height="180"></canvas>
           <div class="screen__glass"></div>
         </div>
-      </div>
+      </a>
     </div>
   </section>
 
@@ -303,12 +303,12 @@
       <div class="sec-head reveal">
         <p class="eyebrow">Pick up &amp; play</p>
         <h2>One skater. Full control. Seconds to learn.</h2>
-        <p>No lobbies, no downloads. Move with the arrow keys, snap off shots, land checks, and drop the gloves. It plays like an arcade classic and settles like a smart contract.</p>
+        <p>No lobbies, no downloads. Move with the arrow keys, snap off shots, land checks, and drop the gloves. It plays like an arcade classic, with verifiable settlement being built for paid competition.</p>
       </div>
       <div class="grid g4">
-        <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 5 13h6l-1 9 8-12h-6l1-8z"/></svg></div><h3>Instant to play</h3><p>Load the game in your browser and you're on the ice — free 1v1, no wallet, no sign-up.</p></div>
-        <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.2-2.9 7.4-7 8.5C7.9 18.4 5 15.2 5 11V6z"/><path d="M12 3v17.5"/></svg></div><h3>Pick your club</h3><p>Claim a real club and carry its colors through every bracket. One club per slot.</p></div>
-        <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4.5v1.5A2.5 2.5 0 0 0 7 10M17 6h2.5v1.5A2.5 2.5 0 0 1 17 10"/><path d="M12 13v3M9 20h6M9.6 20l.4-4h4l.4 4"/></svg></div><h3>Compete for USDC</h3><p>Stake head-to-head or enter a cup. Prize pools are player-funded and pay out onchain.</p></div>
+        <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 5 13h6l-1 9 8-12h-6l1-8z"/></svg></div><h3>Instant to play</h3><p>Load the game in your desktop browser and you're on the ice — free 1v1, no wallet, no sign-up.</p></div>
+        <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.2-2.9 7.4-7 8.5C7.9 18.4 5 15.2 5 11V6z"/><path d="M12 3v17.5"/></svg></div><h3>Club roster</h3><p>The full club lineup is revealed below. In-game club selection is planned for an upcoming beta update.</p></div>
+        <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4.5v1.5A2.5 2.5 0 0 0 7 10M17 6h2.5v1.5A2.5 2.5 0 0 1 17 10"/><path d="M12 13v3M9 20h6M9.6 20l.4-4h4l.4 4"/></svg></div><h3>USDC settlement</h3><p>The identity-bound escrow is deployed on Base. Paid competition and matchmaking remain in development.</p></div>
         <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v5c0 4.2-2.9 7.4-7 8.5C7.9 18.4 5 15.2 5 11V6z"/></svg></div><h3>Verifiable results</h3><p>Every match resolves to a single verifiable hash. The outcome never depends on our word.</p></div>
       </div>
     </div>
@@ -318,8 +318,8 @@
     <div class="wrap">
       <div class="sec-head reveal">
         <p class="eyebrow">Drop the gloves</p>
-        <h2>Fighting is a mechanic, not a cutscene</h2>
-        <p>Fighting is core to the game, not a scripted event. Square up, read your opponent, and settle it — a skill-based bout that runs on the same deterministic engine as every other second of the match.</p>
+        <h2>Fighting stays under player control</h2>
+        <p>Timing, reads, and defensive choices determine every bout. Each input runs through the same deterministic engine that governs open play, so the outcome remains part of the match rather than a scripted interruption.</p>
       </div>
       <div class="fight-steps">
         <div class="step reveal"><div class="k">01 · Square up</div><h3>Instigate</h3><p>Challenge a rival after a big hit. Both players drop the gloves and the bout begins.</p></div>
@@ -333,14 +333,14 @@
   <section id="modes" class="sec-dark" style="background:var(--arena2)">
     <div class="wrap">
       <div class="sec-head reveal">
-        <p class="eyebrow">Three ways to play</p>
-        <h2>Practice free. Compete head-to-head. Chase the cup.</h2>
-        <p>Free play is for sharpening your game — no wallet, no stakes. Funds only ever move when players choose to compete for them.</p>
+        <p class="eyebrow">Free play is live</p>
+        <h2>Practice now. Paid competition comes next.</h2>
+        <p>Free play is open today — no wallet, no stakes. Head-to-head USDC and cup modes remain in development.</p>
       </div>
       <div class="grid g3">
-        <div class="mode reveal" style="--tc:var(--steel)"><div class="mode__top"></div><div class="kick">Free play</div><div class="price">Free<small> · always</small></div><div class="desc">Sharpen your game</div><ul><li>Instant 1v1 in-browser</li><li>No wallet or sign-up</li><li>Every club and rink</li><li>Practice checks and fights</li></ul></div>
-        <div class="mode mode--feat reveal" style="--tc:var(--blue)"><div class="flag">Featured</div><div class="mode__top"></div><div class="kick">Head-to-head</div><div class="price">1v1<small> · USDC</small></div><div class="desc">Winner takes the pot</div><ul><li>Both players stake USDC</li><li>Winner takes the pot, less a small rake</li><li>Settled onchain on Base</li><li>Resolved by a signed replay</li></ul></div>
-        <div class="mode reveal" style="--tc:var(--red)"><div class="mode__top"></div><div class="kick">Tournaments</div><div class="price">Cups<small> · brackets</small></div><div class="desc">Lift the Blue Line Cup</div><ul><li>Player-funded prize pools</li><li>Knockout bracket format</li><li>Onchain podium payouts</li><li>Soulbound champion medals</li></ul></div>
+        <div class="mode reveal" style="--tc:var(--steel)"><div class="mode__top"></div><div class="kick">Free play</div><div class="price">Free<small> · always</small></div><div class="desc">Sharpen your game</div><ul><li>Instant desktop 1v1</li><li>No wallet or sign-up</li><li>Full rink and controls</li><li>Practice checks and fights</li></ul></div>
+        <div class="mode mode--feat reveal" style="--tc:var(--blue)"><div class="flag">In development</div><div class="mode__top"></div><div class="kick">Head-to-head</div><div class="price">1v1<small> · USDC</small></div><div class="desc">Identity-bound settlement</div><ul><li>Player-funded USDC stakes</li><li>Winner payout less a small rake</li><li>Settlement escrow on Base</li><li>Outcome derived from a replay</li></ul></div>
+        <div class="mode reveal" style="--tc:var(--red)"><div class="mode__top"></div><div class="kick">Planned</div><div class="price">Cups<small> · brackets</small></div><div class="desc">Lift the Blue Line Cup</div><ul><li>Player-funded prize pools</li><li>Knockout bracket format</li><li>Onchain podium payouts</li><li>Soulbound champion medals</li></ul></div>
       </div>
     </div>
   </section>
@@ -348,9 +348,9 @@
   <section id="clubs">
     <div class="wrap">
       <div class="sec-head reveal">
-        <p class="eyebrow">Pick your club</p>
-        <h2>Skate as the real clubs.</h2>
-        <p>Every hockey city, every rivalry — from the Original Six to today. Choose your team, wear its colors, and defend them on the ice.</p>
+        <p class="eyebrow">Club roster</p>
+        <h2>Skate as your favorite club.</h2>
+        <p>Every hockey city, every rivalry — from the Original Six to today. The roster is revealed here, with selectable in-game clubs planned for an upcoming beta update.</p>
       </div>
       <div class="clubs">
         <div class="club reveal"><img class="crest" src="/clubs/boston.webp" alt="Boston Bruins crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Boston</div><div class="team">Bruins</div></div></div>
@@ -379,14 +379,14 @@
         <div class="reveal">
           <p class="eyebrow">Provably fair</p>
           <h2>Fairness you can verify</h2>
-          <p class="lead">The Blue Line runs on a deterministic engine — identical inputs always produce an identical match, down to the last carom off the boards. Every result, goal, and fight can be independently verified and settled onchain on Base.</p>
-          <a class="btn btn--play" href="#cta">Get early access</a>
+          <p class="lead">The Blue Line runs on a deterministic engine — identical inputs always produce an identical match, down to the last carom off the boards. Replays can be independently verified, and the paid settlement path is deployed on Base.</p>
+          <a class="btn btn--play" href="/game/">Play free now</a>
         </div>
         <div class="grid reveal" style="gap:16px">
           <div class="feat"><div class="n">01</div><div><h3>Deterministic engine</h3><p>The identical simulation runs in your browser and on the network. One replay, one hash, every time.</p></div></div>
-          <div class="feat"><div class="n">02</div><div><h3>Replayable matches</h3><p>Any match can be re-simulated and checked against its onchain record. Tampered results don't survive.</p></div></div>
-          <div class="feat"><div class="n">03</div><div><h3>Settles on Base</h3><p>Stakes, brackets, and payouts settle in USDC on Base, resolved against a signed replay.</p></div></div>
-          <div class="feat"><div class="n">04</div><div><h3>Soulbound medals</h3><p>Cup finishes mint as medals you keep — a permanent onchain record of your results.</p></div></div>
+          <div class="feat"><div class="n">02</div><div><h3>Replayable matches</h3><p>A captured match can be re-simulated and checked against its canonical hash. Tampered results don't survive.</p></div></div>
+          <div class="feat"><div class="n">03</div><div><h3>Settlement on Base</h3><p>The deployed USDC escrow binds each paid match to its chain, contract, players, and replay identity.</p></div></div>
+          <div class="feat"><div class="n">04</div><div><h3>Paid play in development</h3><p>The escrow is armed, but public paid matchmaking remains off while the end-to-end product path is reviewed.</p></div></div>
         </div>
       </div>
     </div>
@@ -399,7 +399,7 @@
         <div>
           <span class="chip">$BLINE · on Base</span>
           <h2>A token for access, not advantage</h2>
-          <p>$BLINE launches on Clanker on Base. It governs access and identity — never gameplay.</p>
+          <p>$BLINE is planned for Clanker on Base. It is designed for access and identity — never gameplay.</p>
           <ul>
             <li><span><b>Hold to enter.</b> A small balance unlocks paid cups; free 1v1 never requires a wallet.</span></li>
             <li><span><b>Wear your colors.</b> Club skins and cosmetics — appearance only, no competitive edge.</span></li>
@@ -414,9 +414,9 @@
     <div class="wrap">
       <div class="sec-head reveal"><p class="eyebrow">The road ahead</p><h2>Where The Blue Line is headed</h2></div>
       <div class="road">
-        <div class="phase reveal is-live"><div class="phase__node"></div><div class="phase__tag">Live now</div><ul><li>Free 1v1 prototype</li><li>Pixel arcade engine</li><li>Boards, caroms &amp; fights core</li></ul></div>
-        <div class="phase reveal"><div class="phase__node"></div><div class="phase__tag">In build</div><ul><li>USDC 1v1 on Base</li><li>Blue Line Cup brackets</li><li>Clubs &amp; $BLINE on Clanker</li></ul></div>
-        <div class="phase reveal is-launch"><div class="phase__node"></div><div class="phase__tag">Launch · next week</div><ul><li>Full public launch</li><li>Real-money cups open</li><li>Leaderboards &amp; seasons</li></ul></div>
+        <div class="phase reveal is-live"><div class="phase__node"></div><div class="phase__tag">Public beta · live</div><ul><li>Free desktop play</li><li>Pixel arcade engine</li><li>Boards, caroms &amp; fights</li></ul></div>
+        <div class="phase reveal"><div class="phase__node"></div><div class="phase__tag">In build</div><ul><li>Online head-to-head</li><li>USDC settlement on Base</li><li>Club progression</li></ul></div>
+        <div class="phase reveal is-launch"><div class="phase__node"></div><div class="phase__tag">Planned</div><ul><li>Blue Line Cup brackets</li><li>Leaderboards &amp; seasons</li><li>$BLINE on Clanker</li></ul></div>
       </div>
     </div>
   </section>
@@ -424,11 +424,11 @@
   <section class="cta-final" id="cta">
     <div class="wrap reveal">
       <p class="eyebrow" style="justify-content:center">The onchain blue line · 2026</p>
-      <h2>Lace up. The puck drops next week.</h2>
-      <p style="max-width:38ch;margin-inline:auto">Get early access, club reveals, and the $BLINE launch as it happens.</p>
+      <h2>Lace up. The public beta is live.</h2>
+        <p style="max-width:38ch;margin-inline:auto">Play a free match in your desktop browser. No wallet, account, or download required.</p>
       <div class="btns">
+        <a class="btn btn--dark" href="/game/">Play free now</a>
         <a class="btn btn--dark" href="https://x.com/BlueLineBase" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>Follow @BlueLineBase</a>
-        <a class="btn btn--ghost" href="mailto:hello@bluelinegame.com"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>hello@bluelinegame.com</a>
       </div>
     </div>
   </section>
@@ -439,10 +439,10 @@
     <div class="foot">
       <div style="max-width:320px">
         <a class="brand" href="#top"><img class="brand-mark" src="/wordmark.png" alt="The Blue Line" width="2000" height="600"></a>
-        <p style="margin-top:16px;font-size:14px">Onchain arcade hockey on Base. Pick your club, drop the gloves, settle it on the ice.</p>
+        <p style="margin-top:16px;font-size:14px">Onchain arcade hockey on Base. Take the ice, drop the gloves, settle it on the ice.</p>
       </div>
       <div class="foot__links">
-        <div><h4>Game</h4><a href="#play">How it works</a><a href="#fights">Fights</a><a href="#modes">Modes</a><a href="#clubs">Clubs</a></div>
+        <div><h4>Game</h4><a href="/game/">Play free</a><a href="#play">How it works</a><a href="#fights">Fights</a><a href="#clubs">Clubs</a></div>
         <div><h4>Onchain</h4><a href="#onchain">Verifiable</a><a href="#token">$BLINE</a><a href="#roadmap">Roadmap</a></div>
         <div><h4>Connect</h4><a href="https://x.com/BlueLineBase" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</a><a href="mailto:hello@bluelinegame.com"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>hello@bluelinegame.com</a></div>
       </div>
@@ -458,7 +458,7 @@
   const onScroll=()=>nav.classList.toggle('scrolled',scrollY>12);
   onScroll();addEventListener('scroll',onScroll,{passive:true});
 
-  const items=[['Free to play'],['Drop the gloves'],['Real USDC'],['Provably fair'],['Pick your club'],['Blue Line Cup'],['Settles on Base']];
+  const items=[['Free to play'],['Drop the gloves'],['USDC in build'],['Provably fair'],['Club roster'],['Blue Line Cup'],['Built on Base']];
   const build=()=>items.map(([a,b])=>`<span>${a}${b?' <b>'+b+'</b>':''}</span><span class="sep"></span>`).join('');
   const marqHalf=build().repeat(4);document.getElementById('marq').innerHTML=marqHalf+marqHalf;
 

@@ -132,7 +132,7 @@
   .screen::before,.screen::after{content:"";position:absolute;width:8px;height:8px;background:#26306a;border:1px solid #4658a8;border-radius:50%;bottom:8px}
   .screen::before{left:8px}.screen::after{right:8px}
   .screen__bezel{position:relative;background:#04060f;padding:0;overflow:hidden;box-shadow:inset 0 0 0 3px #020309,inset 0 0 40px rgba(0,0,0,.7);aspect-ratio:16/9}
-  .screen canvas{width:100%;height:100%}
+  .screen__demo{display:block;width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
   .screen__glass{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 26%);mix-blend-mode:screen}
   .screen__tag{position:absolute;top:20px;left:20px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sky);background:rgba(0,0,0,.5);padding:5px 9px;z-index:2;border:1px solid rgba(125,144,255,.35)}
   @media(max-width:860px){.hero__grid{grid-template-columns:1fr;gap:32px}.hero{padding:100px 0 58px}.screen{order:-1}}
@@ -302,7 +302,7 @@
       <a class="screen" id="screen" href="/game/" aria-label="Play The Blue Line">
         <span class="screen__tag">● Play live</span>
         <div class="screen__bezel">
-          <canvas id="attract" width="320" height="180"></canvas>
+          <img class="screen__demo" src="/game-demo-faceoff.png" alt="The Blue Line game demo faceoff with blue and red skaters squared up around the puck" width="1440" height="810" fetchpriority="high" decoding="async">
           <div class="screen__glass"></div>
         </div>
       </a>
@@ -504,195 +504,6 @@
       if(Math.abs(tx-cx)>0.4||Math.abs(ty-cy)>0.4)raf=requestAnimationFrame(tick);else raf=0;}
   })();
 
-  (function(){
-    const cv=document.getElementById('attract');if(!cv)return;const g=cv.getContext('2d');
-    g.imageSmoothingEnabled=false;
-    const W=320,H=180;
-    const P={ice:'#eaf1ff',iceHi:'#ffffff',iceSh:'#d6e2ff',line:'#0000ff',red:'#e5352b',
-      board:'#12183a',boardHi:'#26306a',crowd:['#3552ff','#e5352b','#7d90ff','#c8102e','#f2a900','#2a2f38'],
-      home:'#2b4bff',homeD:'#12227a',homeH:'#a9baff',away:'#e5352b',awayD:'#8f1712',awayH:'#ff9d95',
-      skin:'#f2c290',skinD:'#d99f68',stick:'#8a5a2a',puck:'#0a0a12',pad:'#eef2ff',padD:'#c3cce6',
-      glow:'#ffe27a',wht:'#f4f6ff',dark:'#0a1230',hair:'#241a10',cage:'rgba(70,80,110,.9)'};
-    const px=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(x|0,y|0,w|0,h|0);};
-    const RK={x:14,y:24,w:292,h:132},R=RK.x+RK.w,B=RK.y+RK.h,cx=RK.x+RK.w/2,cy=RK.y+RK.h/2;
-    const GL=RK.x+26,GR=R-26,GM=34,gT=cy-GM/2,gB2=cy+GM/2;
-    function rink(){
-      px(0,0,W,H,P.dark);
-      // crowd + boards
-      px(0,RK.y-6,W,6,P.boardHi);px(0,B,W,H-B,P.boardHi);
-      for(let i=0;i<W;i+=3){px(i,RK.y-5,2,2,P.crowd[(i*7)%6]);px(i,B+2,2,2,P.crowd[(i*5)%6]);}
-      px(0,RK.y-6,4,RK.h+12,P.board);px(W-4,RK.y-6,4,RK.h+12,P.board);
-      // ice
-      px(RK.x,RK.y,RK.w,RK.h,P.ice);
-      for(let x=RK.x;x<R;x+=2)px(x,RK.y,1,RK.h,(((x-RK.x)/2)|0)%2?P.iceSh:P.ice);
-      // board frame
-      px(RK.x,RK.y,RK.w,1,P.boardHi);px(RK.x,B-1,RK.w,1,P.boardHi);px(RK.x,RK.y,1,RK.h,P.boardHi);px(R-1,RK.y,1,RK.h,P.boardHi);
-    }
-    function marks(){
-      // goal lines (red)
-      px(GL,RK.y,1,RK.h,P.red);px(GR,RK.y,1,RK.h,P.red);
-      // blue lines
-      px(cx-30,RK.y,3,RK.h,P.line);px(cx+28,RK.y,3,RK.h,P.line);
-      // red center line
-      for(let y=RK.y;y<B;y+=4)px(cx,y,1,2,P.red);
-      // center circle + dot
-      for(let a=0;a<360;a+=10){px(cx+Math.cos(a*Math.PI/180)*17,cy+Math.sin(a*Math.PI/180)*17,1,1,P.line);}
-      px(cx-1,cy-1,2,2,P.line);
-      // zone faceoff dots
-      [[GL+22,cy-30],[GL+22,cy+30],[GR-22,cy-30],[GR-22,cy+30]].forEach(([x,y])=>{px(x-1,y-1,2,2,P.red);
-        for(let a=0;a<360;a+=16)px(x+Math.cos(a*Math.PI/180)*9,y+Math.sin(a*Math.PI/180)*9,1,1,P.red);});
-      // creases (blue) + nets
-      crease(GL,1);crease(GR,-1);
-    }
-    function crease(gx,d){for(let a=-90;a<=90;a+=12){px(gx+Math.cos(a*Math.PI/180)*11*d,cy+Math.sin(a*Math.PI/180)*11,1,1,P.line);}}
-    function net(gx,left,fl){const d=7,x=left?gx-d:gx;px(x,gT,d,GM,'rgba(10,18,48,.85)');
-      for(let i=0;i<=d;i+=3)px(x+i,gT,1,GM,'rgba(180,200,255,.5)');for(let j=0;j<=GM;j+=4)px(x,gT+j,d,1,'rgba(180,200,255,.5)');
-      px(left?gx-d:gx,gT-1,d+1,2,P.red);px(left?gx-1:gx-1,gT-1,2,GM+2,P.red);
-      if(fl>0)px(x,gT,d,GM,'rgba(255,226,122,'+fl+')');}
-    function skater(fx,fy,face,swing,team,o){o=o||{};
-      const K=team==='away'?[P.away,P.awayD,P.awayH]:[P.home,P.homeD,P.homeH];
-      const down=o.down,gloves=o.gloves!==false,helmet=o.helmet!==false,punch=o.punch|0,stick=(o.stick!==false)&&!down;
-      g.fillStyle='rgba(10,18,48,.22)';g.beginPath();g.ellipse(fx,fy+1,6,2.4,0,0,7);g.fill();
-      if(down){px(fx-6,fy-2,12,4,K[0]);px(fx-6,fy-2,12,1,K[2]);
-        px(fx+6,fy-3,4,4,P.skin);px(fx+6,fy-3,4,1,P.hair);return;}
-      const bx=fx-4,top=fy-15,s=Math.sin(swing)*1.4,s2=Math.sin(swing+Math.PI)*1.4,sd=face==='left'?-1:1;
-      // legs + skates
-      px(bx+1,fy-5,2,4-(s>0?1:0),P.skin);px(bx+5,fy-5,2,4-(s2>0?1:0),P.skin);
-      px(bx,fy-1,3,1,P.dark);px(bx+5,fy-1,3,1,P.dark);
-      // jersey + arms
-      px(bx-1,top+5,10,4,K[1]);px(bx,top+5,8,1,K[2]);px(bx,top+6,8,2,K[0]);
-      px(bx-1,top+5,1,4,P.skin);px(bx+8,top+5,1,4,P.skin);
-      // stick — gripped in the gloves, angled down to the ice in front
-      if(stick){const hx=fx+sd*4,hy=fy-7;for(let k=0;k<7;k++)px(hx+sd*k,hy+k,1,1,P.stick);
-        px(fx+sd*9,fy-1,sd*3,1,P.stick);px(fx+sd*2,fy-8,1,1,P.stick);}
-      // hands: gloves (team) or bare fists (skin) once dropped
-      const hcol=gloves?K[1]:P.skin;
-      px(bx-2,top+8,3,2,hcol);px(bx+7,top+8,3,2,hcol);
-      if(gloves){px(bx-2,top+8,3,1,K[2]);px(bx+7,top+8,3,1,K[2]);}
-      // punch — throw the lead fist at the target
-      if(punch>0){px(fx+sd*5,fy-9,sd*4,2,hcol);px(fx+sd*8,fy-9,sd*3,2,hcol);}
-      // head + helmet (or bare hair once knocked off)
-      px(bx+1,top,6,5,P.skin);
-      if(helmet){px(bx,top-1,8,4,K[0]);px(bx,top-1,8,1,K[2]);px(bx,top+2,8,1,P.dark);
-        px(bx+2,top+3,1,2,P.cage);px(bx+5,top+3,1,2,P.cage);}
-      else{px(bx+1,top,6,2,P.hair);px(bx+1,top-1,6,1,P.hair);}
-      if(face==='left')px(bx+2,top+3,1,1,P.dark);else if(face==='right')px(bx+5,top+3,1,1,P.dark);
-      else{px(bx+2,top+3,1,1,P.dark);px(bx+5,top+3,1,1,P.dark);}}
-    function goalie(gx,left,butterfly){const dir=left?1:-1,fx=gx+dir*4,fy=gy(),BK='#0b0d16',TR='#dfe6ff';
-      g.fillStyle='rgba(10,18,48,.30)';g.beginPath();g.ellipse(fx,fy+5,butterfly?11:8,2.6,0,0,7);g.fill();
-      if(butterfly){
-        // butterfly: knees together at centre, pads splayed flat to the ice, skates out
-        px(fx-1,fy-2,2,3,BK);
-        px(fx-9,fy+1,8,3,BK);px(fx+1,fy+1,8,3,BK);
-        px(fx-9,fy+1,8,1,TR);px(fx+1,fy+1,8,1,TR);
-        px(fx-10,fy+3,2,1,P.dark);px(fx+8,fy+3,2,1,P.dark);
-        px(fx-5,fy-6,10,6,BK);px(fx-5,fy-6,10,1,TR);
-        px(fx+dir*6,fy-5,2,4,BK);
-        px(fx-2,fy-10,5,4,BK);px(fx-2,fy-10,5,1,TR);px(fx-1,fy-8,3,1,TR);
-        return;
-      }
-      px(fx-5,fy-1,4,6,BK);px(fx+1,fy-1,4,6,BK);
-      px(fx-4,fy-1,1,6,TR);px(fx+2,fy-1,1,6,TR);
-      px(fx-5,fy-7,10,6,BK);px(fx-5,fy-7,10,1,TR);
-      px(fx+dir*5,fy-6,2,4,BK);
-      px(fx-2,fy-11,5,4,BK);px(fx-2,fy-11,5,1,TR);px(fx-1,fy-9,3,1,TR);}
-    let gyv=cy;const gy=()=>gyv;
-    function puck(x,y,h){g.fillStyle='rgba(10,18,48,.25)';g.beginPath();g.ellipse(x,y,3,1.4,0,0,7);g.fill();
-      px(x-2,y-2-h,4,3,P.puck);px(x-2,y-2-h,4,1,'#33384a');}
-
-    let sparks=[],flashL=0,flashR=0,t=0,shake=0,banner=0,bannerTxt='';
-    let bx,by,bvx,bvy,bh,bvh,owner,cool,home,away,fight;
-    const face=(dx,dy)=>Math.abs(dx)>=Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');
-    function reset(dir){bx=cx;by=cy;bvx=(dir||1)*0.5;bvy=(Math.random()-.5)*.4;bh=0;bvh=0;owner=null;cool=26;fight=null;
-      home={x:cx-42,y:cy+14,sw:0,face:'right'};away={x:cx+42,y:cy-14,sw:0,face:'left'};}
-    reset(1);
-    function chase(p,tx,ty,sp){const dx=tx-p.x,dy=ty-p.y,m=Math.hypot(dx,dy)||1;p.x+=dx/m*sp;p.y+=dy/m*sp;p.face=face(dx,dy);p.sw+=.35;
-      p.x=Math.max(RK.x+4,Math.min(R-4,p.x));p.y=Math.max(RK.y+5,Math.min(B-5,p.y));}
-    function shoot(p,gx){const gy2=cy+(Math.random()*GM-GM*.55);const dx=gx-p.x,dy=gy2-p.y,m=Math.hypot(dx,dy)||1;
-      owner=null;bvx=dx/m*4.6;bvy=dy/m*4.6;bvh=.4+Math.random()*.5;cool=15;shake=2;}
-    function startFight(){fight={phase:'square',f:0,hb:60,ab:60,ht:0,at:0,hpunch:0,apunch:0,
-        hGloves:true,aGloves:true,hHelmet:true,aHelmet:true,winner:null,debris:[]};
-      bannerTxt='SQUARE UP';banner=1;
-      home.x=cx-8;away.x=cx+8;home.y=away.y=cy;home.face='right';away.face='left';}
-    function dropGloves(who){const p=who==='home'?home:away,col=who==='home'?P.homeD:P.awayD;
-      if(who==='home')fight.hGloves=false;else fight.aGloves=false;
-      for(const dx of [-5,5])fight.debris.push({x:p.x+dx,y:cy-6,vx:(.3+Math.random()*.5)*(dx<0?-1:1),vy:-1.7-Math.random(),gy:cy+(Math.random()*10-3),type:'glove',col,rest:false});}
-    function knockHelmet(who){const p=who==='home'?home:away,col=who==='home'?P.home:P.away;
-      if(who==='home')fight.hHelmet=false;else fight.aHelmet=false;
-      fight.debris.push({x:p.x+(who==='home'?-2:2),y:cy-14,vx:(who==='home'?-1:1)*(1+Math.random()),vy:-2.4,gy:cy+(Math.random()*8-4),type:'helmet',col,rest:false});
-      bannerTxt='HELMET OFF!';banner=1;shake=3;}
-    function stepDebris(){for(const d of fight.debris){if(d.rest)continue;d.x+=d.vx;d.y+=d.vy;d.vy+=.16;
-      if(d.y>=d.gy){d.y=d.gy;d.vy=0;d.vx*=.4;if(Math.abs(d.vx)<.14){d.vx=0;d.rest=true;}}}}
-    function stepFight(){const f=fight;f.f++;if(f.hpunch>0)f.hpunch--;if(f.apunch>0)f.apunch--;stepDebris();
-      if(f.phase==='square'){if(f.f===8)dropGloves('home');
-        if(f.f===17){dropGloves('away');bannerTxt='GLOVES OFF!';banner=1;}
-        if(f.f>=36)f.phase='live';return;}
-      if(f.phase==='live'){
-        if(f.ht>0)f.ht--;else if(Math.random()<.11){f.ht=7;f.hpunch=6;if(Math.random()<.6){const d=9+(Math.random()*7|0);f.ab-=d;shake=2;spark(away.x,cy-8,P.awayH);if(f.aHelmet&&d>12&&Math.random()<.55)knockHelmet('away');}}
-        if(f.at>0)f.at--;else if(Math.random()<.11){f.at=7;f.apunch=6;if(Math.random()<.6){const d=9+(Math.random()*7|0);f.hb-=d;shake=2;spark(home.x,cy-8,P.homeH);if(f.hHelmet&&d>12&&Math.random()<.55)knockHelmet('home');}}
-        if(f.hb<=0){f.winner='away';f.phase='over';f.f=0;bannerTxt='AWAY DECKS HIM';}
-        else if(f.ab<=0){f.winner='home';f.phase='over';f.f=0;bannerTxt='HOME DECKS HIM';}
-        return;}
-      if(f.f>120){banner=0;reset(f.winner==='home'?1:-1);}}
-    function step(){t++;if(cool>0)cool--;if(shake>0)shake-=.5;if(banner>0)banner-=.006;
-      gyv+=((Math.max(gT+5,Math.min(gB2-5,by))-gyv))*.10;
-      if(fight){stepFight();return;}
-      // occasionally drop the gloves near center
-      if(owner===null&&Math.abs(bx-cx)<30&&Math.hypot(home.x-away.x,home.y-away.y)<20&&t>90&&Math.random()<.010){startFight();return;}
-      if(owner==='home'){bx=home.x+5;by=home.y;chase(home,GR-14,cy+Math.sin(t*.05)*22,1.25);if(home.x>GR-64&&Math.random()<.05)shoot(home,GR);}
-      else if(owner==='away'){bx=away.x-5;by=away.y;chase(away,GL+14,cy+Math.cos(t*.05)*22,1.2);if(away.x<GL+64&&Math.random()<.05)shoot(away,GL);}
-      else{chase(home,bx,by,1.12);chase(away,bx,by,1.06);
-        bx+=bvx;by+=bvy;bvx*=.982;bvy*=.982;bh+=bvh;bvh-=.14;if(bh<0){bh=0;bvh=-bvh*.4;if(Math.abs(bvh)<.3)bvh=0;}
-        if(by<RK.y+2){by=RK.y+2;bvy=Math.abs(bvy)*.82;spark(bx,by,P.wht);}
-        if(by>B-2){by=B-2;bvy=-Math.abs(bvy)*.82;spark(bx,by,P.wht);}
-        if(bvx<0&&bx<=GL&&bh<7&&by>gT&&by<gB2){if(Math.abs(by-gyv)<7){bx=GL;bvx=Math.abs(bvx)*.7;spark(bx,by,P.padD);}else goal(0);}
-        else if(bvx>0&&bx>=GR&&bh<7&&by>gT&&by<gB2){if(Math.abs(by-gyv)<7){bx=GR;bvx=-Math.abs(bvx)*.7;spark(bx,by,P.padD);}else goal(1);}
-        if(bx<RK.x+2){bx=RK.x+2;bvx=Math.abs(bvx)*.82;spark(bx,by,P.wht);}
-        if(bx>R-2){bx=R-2;bvx=-Math.abs(bvx)*.82;spark(bx,by,P.wht);}
-        if(cool<=0&&bh<5){const dh=Math.hypot(bx-home.x,by-home.y),da=Math.hypot(bx-away.x,by-away.y);
-          if(dh<9&&dh<=da)owner='home';else if(da<9)owner='away';}}
-      // steals
-      if(owner==='home'&&Math.hypot(away.x-home.x,away.y-home.y)<7&&cool<=0&&Math.random()<.05){owner='away';cool=10;}
-      else if(owner==='away'&&Math.hypot(home.x-away.x,home.y-away.y)<7&&cool<=0&&Math.random()<.05){owner='home';cool=10;}
-      flashL*=.9;flashR*=.9;
-      sparks=sparks.filter(s=>s.l>0);for(const s of sparks){s.x+=s.vx;s.y+=s.vy;s.vy+=.05;s.l-=.035;}}
-    function spark(x,y,c){for(let i=0;i<5;i++)sparks.push({x,y,vx:(Math.random()-.5)*1.4,vy:(Math.random()-.5)*1.4-.3,l:1,c});}
-    function burst(x,y){for(let i=0;i<16;i++)sparks.push({x,y,vx:Math.cos(i)*(.7+Math.random()),vy:Math.sin(i)*(.7+Math.random())-.4,l:1,c:[P.glow,P.wht,P.line][i%3]});}
-    function goal(side){if(side===0)flashL=1;else flashR=1;burst(bx,by);bannerTxt='GOAL!';banner=1;shake=3;reset(side===0?-1:1);}
-    function txt(s,y,c){g.font='bold 13px ui-monospace,monospace';g.textAlign='center';g.fillStyle=c;g.fillText(s,W/2,y);}
-    function meterFight(){const f=fight,y=cy-25;
-      px(cx-52,y,44,4,'rgba(10,18,48,.5)');px(cx-52,y,Math.max(0,f.hb/60*44)|0,4,P.home);
-      px(cx+8,y,44,4,'rgba(10,18,48,.5)');px(cx+8+ (44-(Math.max(0,f.ab/60*44)|0)),y,Math.max(0,f.ab/60*44)|0,4,P.away);}
-    function draw(){g.save();if(shake>0)g.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
-      rink();marks();net(GL,true,flashL);net(GR,false,flashR);
-      const shotL=!fight&&owner===null&&bvx<0&&bx<GL+60&&bh<8;
-      const shotR=!fight&&owner===null&&bvx>0&&bx>GR-60&&bh<8;
-      goalie(GL,true,shotL);goalie(GR,false,shotR);
-      if(fight){
-        for(const d of fight.debris){if(d.type==='glove'){px(d.x-1,d.y-1,3,2,d.col);px(d.x-1,d.y-1,3,1,'rgba(255,255,255,.45)');}
-          else{px(d.x-2,d.y-1,4,2,d.col);px(d.x-2,d.y-2,4,1,'rgba(255,255,255,.55)');}}
-        const hd=fight.winner==='away',ad=fight.winner==='home';
-        skater(home.x,cy,'right',t,'home',{down:hd,gloves:fight.hGloves,helmet:fight.hHelmet,punch:fight.hpunch,stick:false});
-        skater(away.x,cy,'left',t,'away',{down:ad,gloves:fight.aGloves,helmet:fight.aHelmet,punch:fight.apunch,stick:false});
-        for(const s of sparks)px(s.x,s.y,1,1,s.c);
-        if(fight.phase!=='over')meterFight();
-      }else{
-        const A=[{y:home.y,f:()=>skater(home.x,home.y,home.face,home.sw,'home',{})},
-          {y:away.y,f:()=>skater(away.x,away.y,away.face,away.sw,'away',{})},
-          {y:by-bh,f:()=>puck(bx,by,bh)}];
-        A.sort((a,b)=>a.y-b.y);for(const a of A)a.f();
-        for(const s of sparks)px(s.x,s.y,1,1,s.c);
-      }
-      if(banner>0){g.globalAlpha=Math.min(1,banner*2.2);txt(bannerTxt,cy-2,bannerTxt==='GOAL!'?P.glow:(bannerTxt==='GLOVES OFF!'||bannerTxt==='HELMET OFF!')?P.red:P.wht);g.globalAlpha=1;g.textAlign='left';}
-      for(let y=RK.y;y<B;y+=2)px(0,y,W,1,'rgba(0,0,20,0.05)');
-      g.restore();}
-    const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-    const STEP=1000/60;let acc=0,last=performance.now();
-    function loop(now){let dt=now-last;last=now;if(dt>100)dt=100;
-      if(!reduce){acc+=dt;while(acc>=STEP){step();acc-=STEP;}}
-      draw();requestAnimationFrame(loop);}
-    if(reduce){step();draw();}else requestAnimationFrame(loop);
-  })();
 </script>
 </body>
 </html>

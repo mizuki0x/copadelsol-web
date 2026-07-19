@@ -4,10 +4,37 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>The Blue Line</title>
+<script>
+  (() => {
+    const NativeContext = window.AudioContext || window.webkitAudioContext;
+    if (!NativeContext) return;
+
+    const contexts = new Set();
+    const TrackedContext = new Proxy(NativeContext, {
+      construct(target, args) {
+        const context = Reflect.construct(target, args);
+        contexts.add(context);
+        return context;
+      },
+    });
+    window.AudioContext = TrackedContext;
+    window.webkitAudioContext = TrackedContext;
+
+    const resumeAudio = () => {
+      for (const context of contexts) {
+        if (context.state === 'suspended') {
+          context.resume().catch(error => console.warn('blue line audio resume failed', error));
+        }
+      }
+    };
+    addEventListener('pointerdown', resumeAudio, { capture: true });
+    addEventListener('keydown', resumeAudio, { capture: true });
+  })();
+</script>
 
 <script type="module">
-import init, * as bindings from '/game/copa-client-2b4e398cc809631f.js';
-const wasm = await init({ module_or_path: '/game/copa-client-2b4e398cc809631f_bg.wasm' });
+import init, * as bindings from '/game/copa-client-96f89310718d8cec.js';
+const wasm = await init({ module_or_path: '/game/copa-client-96f89310718d8cec_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -53,7 +80,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
   }
 </style>
 <link rel="stylesheet" href="/site.css">
-<link rel="modulepreload" href="/game/copa-client-2b4e398cc809631f.js" crossorigin="anonymous" integrity="sha384-j3G27geEJIIZBZN3lxd9fI5RgY8r0s2uW6qNYj1Asohqxwoh2Vy+u2/q1lyXhIR2"><link rel="preload" href="/game/copa-client-2b4e398cc809631f_bg.wasm" crossorigin="anonymous" integrity="sha384-5+u24r/8/UpvWdY5+vfEiEayawWEXynkfzfdEanJo/SAPJNfnExqJ/m8lW+4GEoM" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/game/copa-client-96f89310718d8cec.js" crossorigin="anonymous" integrity="sha384-DAnUJw+xoMgm9SHAvi1c92BABN1i+qJOvFHXAMszrqTKQwWHJDYi0wi/EA9BUL5+"><link rel="preload" href="/game/copa-client-96f89310718d8cec_bg.wasm" crossorigin="anonymous" integrity="sha384-SxmA5mF5JuRJmIFnUhGjifbGA4iooDfGabocXqcs2Mfv+RC6J7NbMpbx2XRxE/Gk" as="fetch" type="application/wasm"></head>
 <body>
   <div id="boot">loading the blue line…</div>
   <div id="desktop-note">

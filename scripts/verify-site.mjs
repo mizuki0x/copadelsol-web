@@ -15,6 +15,7 @@ const required = [
   "robots.txt",
   "sitemap.xml",
   "site.webmanifest",
+  "site.css",
   "game-demo-faceoff.png",
   "fonts/anton.woff2",
   "game/copa-config.js",
@@ -46,6 +47,7 @@ function refs(html) {
 let refCount = 0;
 for (const file of htmlFiles) {
   const html = readFileSync(join(root, file), "utf8");
+  if (!html.includes('href="/site.css"')) fail(`${file}: missing shared form styles`);
   const ids = [...html.matchAll(/\sid=["']([^"']+)["']/g)].map((match) => match[1]);
   const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
   if (duplicates.length) fail(`${file}: duplicate ids: ${[...new Set(duplicates)].join(", ")}`);
@@ -59,6 +61,11 @@ for (const file of htmlFiles) {
 
 for (const file of required) {
   if (!existsSync(join(root, file))) fail(`missing required file: ${file}`);
+}
+
+const formStyles = readFileSync(join(root, "site.css"), "utf8");
+if (!/select\s*\{[\s\S]*?\n\s*appearance:\s*none/.test(formStyles)) {
+  fail("shared form styles must disable native select appearance");
 }
 
 const manifest = JSON.parse(readFileSync(join(root, "site.webmanifest"), "utf8"));

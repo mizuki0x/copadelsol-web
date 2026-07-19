@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "esbuild src/paid.js --bundle --minify --outfile=paid/paid.js",
-    "check": "node scripts/verify-site.mjs"
+    "check": "node scripts/verify-site.mjs",
+    "test": "node --test"
   },
   "dependencies": {
     "@reown/appkit": "^1.8.18",

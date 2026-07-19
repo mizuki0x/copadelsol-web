@@ -3,6 +3,8 @@ import { EthersAdapter } from '@reown/appkit-adapter-ethers'
 import { base } from '@reown/appkit/networks'
 import { BrowserProvider, Contract } from 'ethers'
 
+import { formatUsdc, parseUsdc } from './stake.js'
+
 const API = window.BLUE_LINE_PAID_API || 'https://blue-line-paid.onrender.com'
 const PROJECT_ID = '05127cba9dfa263ef6c85ff020515276'
 const SESSION_KEY = 'blue-line-paid-session'
@@ -73,6 +75,10 @@ modal.subscribeNetwork(state => {
 ui.wallet.addEventListener('click', connect)
 ui.action.addEventListener('click', act)
 ui.leave.addEventListener('click', leave)
+ui.stake.addEventListener('input', () => {
+  ui.stake.removeAttribute('aria-invalid')
+  if (!match) render()
+})
 addEventListener('pageshow', boot)
 
 async function boot() {
@@ -112,10 +118,11 @@ async function act() {
     await ensureSession()
     if (!match) {
       if (!ui.terms.checked) throw new Error('Confirm the match terms before joining.')
+      const stake = parseUsdc(ui.stake.value)
       const result = await request('/v1/queue', {
         method: 'POST',
         auth: true,
-        body: { stake: Number(ui.stake.value) },
+        body: { stake },
       })
       match = result.match || null
       searching = !match
@@ -334,7 +341,14 @@ function render() {
   if (!match) {
     ui.action.textContent = searching ? 'Searching…' : (busy ? 'Joining…' : 'Find paid match')
     ui.action.disabled = busy || searching
-    setDetail(`Stake per player: ${formatUsdc(ui.stake.value)} USDC on Base.`)
+    try {
+      const stake = parseUsdc(ui.stake.value)
+      ui.stake.setAttribute('aria-invalid', 'false')
+      setDetail(`Stake per player: ${formatUsdc(stake)} USDC on Base.`)
+    } catch (error) {
+      ui.stake.setAttribute('aria-invalid', 'true')
+      setDetail(error.message)
+    }
     return
   }
 
@@ -398,10 +412,6 @@ async function request(path, options = {}) {
   if (response.status === 204 || response.headers.get('content-length') === '0') return null
   const text = await response.text()
   return text ? JSON.parse(text) : null
-}
-
-function formatUsdc(value) {
-  return (Number(value) / 1_000_000).toLocaleString(undefined, { maximumFractionDigits: 2 })
 }
 
 function readJson(key) {

@@ -9,6 +9,7 @@ const htmlFiles = [
   "game/index.html",
   "paid/index.html",
   "rules/index.html",
+  "terms/index.html",
   "privacy/index.html",
 ];
 const required = [

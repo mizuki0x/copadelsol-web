@@ -54,14 +54,19 @@ const ui = {
 
 let session = readJson(SESSION_KEY)
 let wallet = {}
+let network = {}
 let config
 let match
 let searching = sessionStorage.getItem(SEARCH_KEY) === '1'
 let pollTimer
 let busy = false
 
-modal.subscribeProvider(state => {
+modal.subscribeAccount(state => {
   wallet = state || {}
+  render()
+})
+modal.subscribeNetwork(state => {
+  network = state || {}
   render()
 })
 
@@ -127,16 +132,16 @@ async function act() {
       await fundEscrow()
       return
     }
-    if (match.socketPath && ['funded', 'playing', 'settling'].includes(match.state)) {
-      launchGame()
-      return
-    }
     if (match.state === 'open' && match.seat === 0) {
       await reclaim()
       return
     }
     if (match.state === 'funded' && refundAvailable(match)) {
       await refundExpired()
+      return
+    }
+    if (match.socketPath && ['funded', 'playing', 'settling'].includes(match.state)) {
+      launchGame()
     }
   } catch (error) {
     showError(error)
@@ -147,7 +152,7 @@ async function act() {
 }
 
 async function ensureBase() {
-  if (Number(wallet.chainId || modal.getChainId()) === 8453) return
+  if (Number(network.chainId || modal.getChainId()) === 8453) return
   await modal.switchNetwork(base)
   const provider = modal.getWalletProvider()
   if (!provider) throw new Error('Reconnect your wallet on Base.')
@@ -341,10 +346,10 @@ function render() {
   } else if (match.state === 'open') {
     ui.action.textContent = match.seat === 1 ? 'Approve & fund escrow' : 'Reclaim stake'
     ui.action.disabled = busy
-  } else if (match.socketPath && ['funded', 'playing', 'settling'].includes(match.state)) {
-    ui.action.textContent = 'Enter the rink'
   } else if (match.state === 'funded' && refundAvailable(match)) {
     ui.action.textContent = 'Refund expired match'
+  } else if (match.socketPath && ['funded', 'playing', 'settling'].includes(match.state)) {
+    ui.action.textContent = 'Enter the rink'
   } else if (['funded', 'playing', 'settling'].includes(match.state)) {
     ui.action.textContent = 'Preparing witness…'
     ui.action.disabled = true

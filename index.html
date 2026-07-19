@@ -129,10 +129,14 @@
     border:4px solid #05091c;box-shadow:inset 0 0 0 2px #26306a,10px 12px 0 0 rgba(0,0,0,.45),0 30px 60px -24px rgba(0,0,0,.7)}
   .screen::before,.screen::after{content:"";position:absolute;width:8px;height:8px;background:#26306a;border:1px solid #4658a8;border-radius:50%;bottom:8px}
   .screen::before{left:8px}.screen::after{right:8px}
-  .screen__bezel{position:relative;background:#04060f;padding:0;overflow:hidden;box-shadow:inset 0 0 0 3px #020309,inset 0 0 40px rgba(0,0,0,.7);aspect-ratio:3/1}
-  .screen__demo{display:block;width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+  .screen__bezel{position:relative;background:#04060f;padding:0;overflow:hidden;box-shadow:inset 0 0 0 3px #020309,inset 0 0 40px rgba(0,0,0,.7);aspect-ratio:16/9}
+  .screen__demo{display:block;width:100%;height:100%;object-fit:cover}
   .screen__glass{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 26%);mix-blend-mode:screen}
-  .screen__tag{position:absolute;top:20px;left:20px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sky);background:rgba(0,0,0,.5);padding:5px 9px;z-index:2;border:1px solid rgba(125,144,255,.35)}
+  .screen__tag{position:absolute;top:20px;left:20px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sky);background:rgba(0,0,0,.5);padding:5px 9px;z-index:3;border:1px solid rgba(125,144,255,.35)}
+  .screen__link{position:absolute;inset:0;z-index:2}
+  .screen__link:focus-visible{outline:3px solid var(--sky);outline-offset:4px}
+  .screen__sound{position:absolute;right:20px;bottom:20px;z-index:3;border:1px solid rgba(125,144,255,.55);background:rgba(4,6,15,.82);color:#fff;padding:7px 10px;font:700 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+  .screen__sound:hover,.screen__sound:focus-visible{background:var(--blue);outline:none}
   @media(max-width:860px){.hero__grid{grid-template-columns:1fr;gap:32px}.hero{padding:88px 0 46px}.hero-h1{font-size:clamp(34px,7vw,58px)}.screen{order:-1}}
   @media(max-width:420px){.hero-h1{font-size:9vw}}
 
@@ -299,13 +303,17 @@
         </div>
         <div class="trust"><div><b>Free</b> desktop play</div><div><b>Deterministic</b> replay engine</div><div><b>USDC</b> matchmaking on Base</div></div>
       </div>
-      <a class="screen" id="screen" href="/game/" aria-label="Play The Blue Line">
+      <div class="screen" id="screen">
         <span class="screen__tag">● Play live</span>
         <div class="screen__bezel">
-          <img class="screen__demo" src="/game-demo-faceoff.png" alt="The Blue Line game demo faceoff with blue and red skaters squared up around the puck" width="1500" height="500" fetchpriority="high" decoding="async">
+          <video class="screen__demo" id="heroDemo" autoplay muted loop playsinline preload="metadata" poster="/game-demo-faceoff.png" aria-hidden="true" disablepictureinpicture>
+            <source src="/blue-line-demo.mp4" type="video/mp4">
+          </video>
           <div class="screen__glass"></div>
         </div>
-      </a>
+        <a class="screen__link" href="/game/" aria-label="Play The Blue Line"></a>
+        <button class="screen__sound" id="heroSound" type="button" aria-pressed="false">Sound on</button>
+      </div>
     </div>
   </section>
 
@@ -492,6 +500,19 @@
 
   const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  const heroDemo=document.getElementById('heroDemo');
+  const heroSound=document.getElementById('heroSound');
+  if(heroDemo&&heroSound){
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches){heroDemo.autoplay=false;heroDemo.pause();}
+    const syncSound=()=>{const on=!heroDemo.muted;heroSound.textContent=on?'Sound off':'Sound on';heroSound.setAttribute('aria-pressed',String(on));};
+    heroSound.addEventListener('click',()=>{heroDemo.muted=!heroDemo.muted;
+      if(!heroDemo.muted&&heroDemo.paused)heroDemo.play().catch(()=>{heroDemo.muted=true;syncSound();});
+      syncSound();
+    });
+    heroDemo.addEventListener('volumechange',syncSound);
+    syncSound();
+  }
 
   (function(){
     const hero=document.querySelector('.hero'),puck=document.getElementById('heroPuck');

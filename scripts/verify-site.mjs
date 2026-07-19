@@ -18,6 +18,7 @@ const required = [
   "site.webmanifest",
   "site.css",
   "game-demo-faceoff.png",
+  "blue-line-demo.mp4",
   "fonts/anton.woff2",
   "game/copa-config.js",
 ];
@@ -81,6 +82,12 @@ if (
 if (!/\.club \.crest\{[^}]*width:200px;[^}]*height:200px/.test(homeHtml)) {
   fail("club crests must render at 200px");
 }
+if (
+  !/<video[^>]*\bautoplay\b[^>]*\bmuted\b[^>]*\bloop\b[^>]*\bplaysinline\b/.test(homeHtml) ||
+  !homeHtml.includes('<source src="/blue-line-demo.mp4" type="video/mp4">')
+) {
+  fail("hero demo must autoplay muted, inline, and loop");
+}
 
 const manifest = JSON.parse(readFileSync(join(root, "site.webmanifest"), "utf8"));
 for (const icon of manifest.icons ?? []) {
@@ -105,9 +112,16 @@ const wasmPath = join(root, "game", wasm);
 const wasmBytes = readFileSync(wasmPath);
 if (wasmBytes.length > 23 * 1024 * 1024) fail(`WASM exceeds 23 MiB: ${wasmBytes.length} bytes`);
 
-const demo = readFileSync(join(root, "game-demo-faceoff.png"));
-if (demo.readUInt32BE(16) !== 1500 || demo.readUInt32BE(20) !== 500) {
+const demoImage = readFileSync(join(root, "game-demo-faceoff.png"));
+if (demoImage.readUInt32BE(16) !== 1500 || demoImage.readUInt32BE(20) !== 500) {
   fail("hero demo must be 1500x500");
+}
+const demoVideo = readFileSync(join(root, "blue-line-demo.mp4"));
+if (demoVideo.subarray(4, 8).toString("ascii") !== "ftyp") {
+  fail("hero demo video must be an MP4");
+}
+if (demoVideo.length > 2 * 1024 * 1024) {
+  fail(`hero demo video exceeds 2 MiB: ${demoVideo.length} bytes`);
 }
 
 const ignored = new Set([".git", ".playwright-cli", "node_modules", "output"]);
